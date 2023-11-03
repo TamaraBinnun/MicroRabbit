@@ -105,7 +105,7 @@ namespace MicroRabbit.Infrastructure.Bus
             {//execute all event handlers for this event
                 await ProcessEvent(@event.RoutingKey, @event.Body.ToArray()).ConfigureAwait(false);
             }
-            catch (Exception ex)
+            catch (Exception /*ex*/)
             {
             }
         }
@@ -116,8 +116,8 @@ namespace MicroRabbit.Infrastructure.Bus
             {
                 return; //no subscribers to this event
             }
-
-            foreach (var eventHandlerType in _eventData[eventName].EventHandlersType)
+            return;
+            /*foreach (var eventHandlerType in _eventData[eventName].EventHandlersType)
             {
                 var eventHandler = Activator.CreateInstance(eventHandlerType);
                 if (eventHandler == null) { continue; }
@@ -134,7 +134,7 @@ namespace MicroRabbit.Infrastructure.Bus
                  * EventType:CreateUserCommand
                  * EventHandlerType:CreateUserCommandHandler
                  * */
-            }
+            //}
         }
     }
 }
