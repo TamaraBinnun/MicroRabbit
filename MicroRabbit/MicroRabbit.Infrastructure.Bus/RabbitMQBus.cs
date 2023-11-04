@@ -116,8 +116,8 @@ namespace MicroRabbit.Infrastructure.Bus
             {
                 return; //no subscribers to this event
             }
-            return;
-            /*foreach (var eventHandlerType in _eventData[eventName].EventHandlersType)
+
+            foreach (var eventHandlerType in _eventData[eventName].EventHandlersType)
             {
                 var eventHandler = Activator.CreateInstance(eventHandlerType);
                 if (eventHandler == null) { continue; }
@@ -134,7 +134,7 @@ namespace MicroRabbit.Infrastructure.Bus
                  * EventType:CreateUserCommand
                  * EventHandlerType:CreateUserCommandHandler
                  * */
-            //}
+            }
         }
     }
 }
