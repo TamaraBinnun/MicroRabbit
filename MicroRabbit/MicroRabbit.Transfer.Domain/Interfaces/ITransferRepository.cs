@@ -2,8 +2,8 @@
 
 namespace MicroRabbit.Transfer.Domain.Interfaces
 {
-    public interface IAccountTransferRepository
+    public interface ITransferRepository
     {
-        IEnumerable<AccountTransfer> GetAccountTransfers();
+        IEnumerable<AccountTransfer> GetTransfers();
     }
 }

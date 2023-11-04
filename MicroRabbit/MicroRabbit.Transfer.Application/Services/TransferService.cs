@@ -5,20 +5,20 @@ using MicroRabbit.Domain.Core.Bus;
 
 namespace MicroRabbit.Transfer.Application.Services
 {
-    public class AccountTransferService : IAccountTransferService
+    public class TransferService : ITransferService
     {
-        private readonly IAccountTransferRepository _repository;
+        private readonly ITransferRepository _repository;
         private readonly IEventBus _eventBus;
 
-        public AccountTransferService(IAccountTransferRepository repository, IEventBus eventBus)
+        public TransferService(ITransferRepository repository, IEventBus eventBus)
         {
             _repository = repository;
             _eventBus = eventBus;
         }
 
-        public IEnumerable<AccountTransfer> GetAccountTransfers()
+        public IEnumerable<AccountTransfer> GetTransfers()
         {
-            return _repository.GetAccountTransfers();
+            return _repository.GetTransfers();
         }
     }
 }
