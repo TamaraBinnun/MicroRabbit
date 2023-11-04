@@ -25,18 +25,20 @@ namespace MicroRabbit.Banking.WebApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Banking Microservice", Version = "v1" });
             }
-           );
+            );
 
             builder.Services.AddMediatR(c => c.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
             RegisterServices(builder.Services);
 
             var app = builder.Build();
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Banking Microservice v1");
             });
+
             // Configure the HTTP request pipeline.
 
             app.UseHttpsRedirection();
