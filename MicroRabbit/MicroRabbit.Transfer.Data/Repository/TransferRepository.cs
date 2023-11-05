@@ -13,6 +13,12 @@ namespace MicroRabbit.Transfer.Data.Repository
             _context = context;
         }
 
+        public void Add(AccountTransfer accountTransfer)
+        {
+            _context.AccountTransfers.Add(accountTransfer);
+            _context.SaveChanges();
+        }
+
         public IEnumerable<AccountTransfer> GetTransfers()
         {
             return _context.AccountTransfers;

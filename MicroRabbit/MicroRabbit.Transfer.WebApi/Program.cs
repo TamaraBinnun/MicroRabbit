@@ -1,5 +1,8 @@
+using MicroRabbit.Domain.Core.Bus;
 using MicroRabbit.Infrastructure.IoC;
 using MicroRabbit.Transfer.Data.Context;
+using MicroRabbit.Transfer.Domain.EventHandles;
+using MicroRabbit.Transfer.Domain.Events;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -32,21 +35,29 @@ namespace MicroRabbit.Transfer.WebApi
 
             var app = builder.Build();
 
+            // Configure the HTTP request pipeline.
+
+            app.UseHttpsRedirection();
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Transfer Microservice v1");
             });
 
-            // Configure the HTTP request pipeline.
-
-            app.UseHttpsRedirection();
+            ConfigureEventBus(app);
 
             app.UseAuthorization();
 
             app.MapControllers();
 
             app.Run();
+        }
+
+        private static void ConfigureEventBus(WebApplication app)
+        {//configure microservices to subscribe to event
+            var eventBus = app.Services.GetRequiredService<IEventBus>();
+            eventBus.Subscribe<EventToCreateTransfer, EventToCreateTransferHandler>();
         }
 
         private static void RegisterServices(IServiceCollection services)

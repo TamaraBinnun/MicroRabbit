@@ -2,6 +2,7 @@
 using MicroRabbit.Domain.Core.Bus;
 using MicroRabbit.Domain.Core.Commands;
 using MicroRabbit.Domain.Core.Events;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -13,11 +14,13 @@ namespace MicroRabbit.Infrastructure.Bus
     public sealed class RabbitMQBus : IEventBus
     {
         private readonly IMediator _mediator;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly Dictionary<string, EventData> _eventData;//event name => type + all it's subscribers
 
-        public RabbitMQBus(IMediator mediator)
+        public RabbitMQBus(IMediator mediator, IServiceScopeFactory serviceScopeFactory)
         {
             _mediator = mediator;
+            _serviceScopeFactory = serviceScopeFactory;
             _eventData = new Dictionary<string, EventData>();
         }
 
@@ -43,6 +46,7 @@ namespace MicroRabbit.Infrastructure.Bus
             Console.WriteLine("The message was sent");
         }
 
+        //eventBus.Subscribe<EventToCreateTransfer, EventToCreateTransferHandler>()
         public void Subscribe<E, EH>()
             where E : Event
             where EH : IEventHandler<E>
@@ -117,23 +121,27 @@ namespace MicroRabbit.Infrastructure.Bus
                 return; //no subscribers to this event
             }
 
-            foreach (var eventHandlerType in _eventData[eventName].EventHandlersType)
+            using (var scope = _serviceScopeFactory.CreateScope())
             {
-                var eventHandler = Activator.CreateInstance(eventHandlerType);
-                if (eventHandler == null) { continue; }
+                foreach (var eventHandlerType in _eventData[eventName].EventHandlersType)
+                {
+                    var eventHandler = scope.ServiceProvider.GetService(eventHandlerType);
+                    //Activator.CreateInstance(eventHandlerType); - not good because need empty ctor for EventToCreateTransferHandler without injected objects
+                    if (eventHandler == null) { continue; }
 
-                var message = Encoding.UTF8.GetString(eventBody);
-                var eventType = _eventData[eventName].EventType;
-                var @event = JsonConvert.DeserializeObject(message, eventType)!;
+                    var message = Encoding.UTF8.GetString(eventBody);
+                    var eventType = _eventData[eventName].EventType;
+                    var @event = JsonConvert.DeserializeObject(message, eventType)!;
 
-                MethodInfo method = eventHandlerType.GetMethod("Handle")!;
-                method.Invoke(eventHandler, new object[] { @event });
+                    var method = eventHandlerType.GetMethod("Handle")!;
+                    await (Task)method.Invoke(eventHandler, new object[] { @event })!;
 
-                //Example
-                /* Event name:"CreateUserCommand"
-                 * EventType:CreateUserCommand
-                 * EventHandlerType:CreateUserCommandHandler
-                 * */
+                    //Example
+                    /* Event name:"EventToCreateTransfer"
+                     * EventType:EventToCreateTransfer
+                     * EventHandlerType:EventToCreateTransferHandler
+                     * */
+                }
             }
         }
     }
