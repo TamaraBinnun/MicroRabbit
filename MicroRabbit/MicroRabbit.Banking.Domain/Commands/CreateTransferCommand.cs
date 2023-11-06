@@ -1,6 +1,8 @@
-﻿namespace MicroRabbit.Banking.Domain.Commands
+﻿using MicroRabbit.Domain.Core.Commands;
+
+namespace MicroRabbit.Banking.Domain.Commands
 {
-    public class CreateTransferCommand : TransferCommand
+    public class CreateTransferCommand : Command
     {
         public CreateTransferCommand(int from, int to, decimal amount)
         {
@@ -8,5 +10,9 @@
             To = to;
             Amount = amount;
         }
+
+        public int From { get; set; }
+        public int To { get; set; }
+        public decimal Amount { get; set; }
     }
 }

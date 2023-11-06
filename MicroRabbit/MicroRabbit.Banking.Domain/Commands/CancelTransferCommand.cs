@@ -1,12 +1,11 @@
-﻿namespace MicroRabbit.Banking.Domain.Commands
+﻿using MicroRabbit.Domain.Core.Commands;
+
+namespace MicroRabbit.Banking.Domain.Commands
 {
-    public class CancelTransferCommand : TransferCommand
+    public class CancelTransferCommand : Command
     {
-        public CancelTransferCommand(int from, int to, decimal amount)
+        public CancelTransferCommand()
         {
-            From = from;
-            To = to;
-            Amount = amount;
         }
     }
 }

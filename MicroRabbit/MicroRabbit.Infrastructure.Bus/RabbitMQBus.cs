@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System.Reflection;
 using System.Text;
 
 namespace MicroRabbit.Infrastructure.Bus
@@ -90,16 +89,15 @@ namespace MicroRabbit.Infrastructure.Bus
                 DispatchConsumersAsync = true
             };
 
-            using (var connection = factory.CreateConnection())
-            {
-                using (var channel = connection.CreateModel())
-                {
-                    channel.QueueDeclare(eventName, false, false, false, null);
-                    var consumer = new AsyncEventingBasicConsumer(channel);
-                    consumer.Received += ConsumerReceived;
-                    channel.BasicConsume(eventName, true, consumer);
-                }
-            }
+            var connection = factory.CreateConnection();
+
+            var channel = connection.CreateModel();
+
+            channel.QueueDeclare(eventName, false, false, false, null);
+            var consumer = new AsyncEventingBasicConsumer(channel);
+            consumer.Received += ConsumerReceived;
+            channel.BasicConsume(eventName, true, consumer);
+
             Console.WriteLine("The message was received");
         }
 
