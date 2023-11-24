@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  microrabbit.books.api:
+    image: ${DOCKER_REGISTRY-}microrabbitbooksapi
+    build:
+      context: .
+      dockerfile: MicroRabbit.Books.Api\Dockerfile
+
+  microrabbit.orders.api:
+    image: ${DOCKER_REGISTRY-}microrabbitordersapi
+    build:
+      context: .
+      dockerfile: MicroRabbit.Orders.Api\Dockerfile
+

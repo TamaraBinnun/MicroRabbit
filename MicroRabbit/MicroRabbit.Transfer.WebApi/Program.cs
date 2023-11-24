@@ -45,19 +45,11 @@ namespace MicroRabbit.Transfer.WebApi
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Transfer Microservice v1");
             });
 
-            ConfigureEventBus(app);
-
             app.UseAuthorization();
 
             app.MapControllers();
 
             app.Run();
-        }
-
-        private static void ConfigureEventBus(WebApplication app)
-        {//configure microservices to subscribe to event
-            var eventBus = app.Services.GetRequiredService<IEventBus>();
-            eventBus.Subscribe<EventToCreateTransfer, EventToCreateTransferHandler>();
         }
 
         private static void RegisterServices(IServiceCollection services)

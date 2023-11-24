@@ -1,7 +1,9 @@
 ﻿using MediatR;
 using MicroRabbit.Domain.Core.Bus;
 using MicroRabbit.Domain.Core.Commands;
+using MicroRabbit.Domain.Core.EventHandlers;
 using MicroRabbit.Domain.Core.Events;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -14,35 +16,56 @@ namespace MicroRabbit.Infrastructure.Bus
     {
         private readonly IMediator _mediator;
         private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly IConfiguration _config;
         private readonly Dictionary<string, EventData> _eventData;//event name => type + all it's subscribers
 
-        public RabbitMQBus(IMediator mediator, IServiceScopeFactory serviceScopeFactory)
+        public RabbitMQBus(IMediator mediator, IServiceScopeFactory serviceScopeFactory, IConfiguration config)
         {
             _mediator = mediator;
             _serviceScopeFactory = serviceScopeFactory;
+            _config = config;
             _eventData = new Dictionary<string, EventData>();
         }
 
-        public Task SendCommand<C>(C command) where C : Command
+        public async Task<bool> SendCommand<C>(C command) where C : Command
         {
-            return _mediator.Send(command);
+            var response = await _mediator.Send(command);
+            return response;
         }
 
-        public void Publish<E>(E @event) where E : Event
+        public bool Publish<E>(E @event) where E : Event
         {
-            var factory = new ConnectionFactory() { HostName = "localhost" };
-            using (var connection = factory.CreateConnection())
+            var response = false;
+            try
             {
-                using (var channel = connection.CreateModel())
+                var factory = new ConnectionFactory()
                 {
-                    var eventName = @event.GetType().Name;
-                    channel.QueueDeclare(eventName, false, false, false, null);
-                    string message = JsonConvert.SerializeObject(@event);
-                    var body = Encoding.UTF8.GetBytes(message);
-                    channel.BasicPublish("", eventName, null, body);
+                    //Uri = new Uri(_config.GetConnectionString("RabbitMqConnection")!),
+
+                    /*HostName = "host.docker.internal",
+                    UserName = _config["RabbitMQ:UserName"],
+                    Password = _config["RabbitMQ:Password"],*/
+                };
+
+                using (var connection = factory.CreateConnection())
+                {
+                    using (var channel = connection.CreateModel())
+                    {
+                        var eventName = @event.GetType().Name;
+                        channel.QueueDeclare(eventName, false, false, false, null);
+                        string message = JsonConvert.SerializeObject(@event);
+                        var body = Encoding.UTF8.GetBytes(message);
+                        channel.BasicPublish("", eventName, null, body);
+                    }
                 }
+                Console.WriteLine("The message was sent");
+                response = true;
             }
-            Console.WriteLine("The message was sent");
+            catch
+            {
+                //write to log
+            }
+            return response;
         }
 
         //eventBus.Subscribe<EventToCreateTransfer, EventToCreateTransferHandler>()
@@ -85,8 +108,12 @@ namespace MicroRabbit.Infrastructure.Bus
 
             var factory = new ConnectionFactory()
             {
-                HostName = "localhost",
+                Uri = new Uri(_config.GetConnectionString("RabbitMqConnection")!),
                 DispatchConsumersAsync = true
+
+                /*HostName = "host.docker.internal",
+                UserName = _config["RabbitMQ:UserName"],
+                Password = _config["RabbitMQ:Password"],*/
             };
 
             var connection = factory.CreateConnection();
