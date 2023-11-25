@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-   name: microrabbitbooksapi-deployment
+   name: microrabbitordersapi-deployment
    labels:
-      app: booksapi
+      app: ordersapi
 spec:
    replicas: 1
    selector:
       matchLabels:
-         app: booksapi
+         app: ordersapi
    template:
       metadata:
          labels:
-            app: booksapi
+            app: ordersapi
       spec:
          containers:
-            - name:  microrabbitbooksapi
-              image: tamarabinnun/microrabbitbooksapi
+            - name:  microrabbitordersapi
+              image: tamarabinnun/microrabbitordersapi
               ports:
               - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
 metadata:
-   name: microrabbitbooksapi-nodeport
+   name: microrabbitordersapi-nodeport
 spec:
    type: NodePort
    ports:
@@ -31,16 +31,16 @@ spec:
         targetPort: 80   
         nodePort: 30000
    selector:
-      app: booksapi
+      app: ordersapi
 ---
 apiVersion: v1
 kind: Service
 metadata:
-   name: microrabbitbooksapi-clusterip
+   name: microrabbitordersapi-clusterip
 spec:
    type: ClusterIP
    ports:
       - port: 80
         targetPort: 80
    selector:
-      app: booksapi
+      app: ordersapi

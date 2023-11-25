@@ -60,19 +60,20 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8S", "K8S", "{5BF29DA3-5D6C-42F7-9543-1FF830550FA7}"
 	ProjectSection(SolutionItems) = preProject
 		microrabbitbooksapi-deployment.yaml = microrabbitbooksapi-deployment.yaml
+		microrabbitordersapi-deployment.yaml = microrabbitordersapi-deployment.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{A8CA426A-BB29-48D2-8DFF-AC4B8FA07BFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroRabbit.Data", "MicroRabbit.Data\MicroRabbit.Data.csproj", "{19E99FFC-BF2D-474F-9CD7-B750129D5F2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroRabbit.Data", "MicroRabbit.Data\MicroRabbit.Data.csproj", "{19E99FFC-BF2D-474F-9CD7-B750129D5F2C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{C7EDB6C7-9CC0-46B1-85B8-A316B7F00282}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroRabbit.Application", "MicroRabbit.Application\MicroRabbit.Application.csproj", "{94EFEFC4-C950-4598-9E4A-7D3602D3BCF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroRabbit.Application", "MicroRabbit.Application\MicroRabbit.Application.csproj", "{94EFEFC4-C950-4598-9E4A-7D3602D3BCF0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure.Synchronous", "Infrastructure.Synchronous", "{37CF105C-D915-4F5B-B046-7A1F014505EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroRabbit.Orders.Infrastructure.Synchronous", "MicroRabbit.Orders.Infrastructure.Synchronous\MicroRabbit.Orders.Infrastructure.Synchronous.csproj", "{73078280-D75B-47DA-B4F7-0BEC07FDB1A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroRabbit.Orders.Infrastructure.Synchronous", "MicroRabbit.Orders.Infrastructure.Synchronous\MicroRabbit.Orders.Infrastructure.Synchronous.csproj", "{73078280-D75B-47DA-B4F7-0BEC07FDB1A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
