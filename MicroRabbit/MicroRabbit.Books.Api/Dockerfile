@@ -12,9 +12,11 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["MicroRabbit.Books.Api/MicroRabbit.Books.Api.csproj", "MicroRabbit.Books.Api/"]
 COPY ["MicroRabbit.Books.Application/MicroRabbit.Books.Application.csproj", "MicroRabbit.Books.Application/"]
-COPY ["MicroRabbit.Books.Domain/MicroRabbit.Books.Domain.csproj", "MicroRabbit.Books.Domain/"]
+COPY ["MicroRabbit.Application/MicroRabbit.Application.csproj", "MicroRabbit.Application/"]
 COPY ["MicroRabbit.Domain.Core/MicroRabbit.Domain.Core.csproj", "MicroRabbit.Domain.Core/"]
+COPY ["MicroRabbit.Books.Domain/MicroRabbit.Books.Domain.csproj", "MicroRabbit.Books.Domain/"]
 COPY ["MicroRabbit.Books.Data/MicroRabbit.Books.Data.csproj", "MicroRabbit.Books.Data/"]
+COPY ["MicroRabbit.Data/MicroRabbit.Data.csproj", "MicroRabbit.Data/"]
 COPY ["MicroRabbit.Infrastructure.IoC/MicroRabbit.Infrastructure.IoC.csproj", "MicroRabbit.Infrastructure.IoC/"]
 COPY ["MicroRabbit.Infrastructure.Bus/MicroRabbit.Infrastructure.Bus.csproj", "MicroRabbit.Infrastructure.Bus/"]
 RUN dotnet restore "MicroRabbit.Books.Api/MicroRabbit.Books.Api.csproj"

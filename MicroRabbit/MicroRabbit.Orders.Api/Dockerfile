@@ -15,8 +15,11 @@ COPY ["MicroRabbit.Infrastructure.IoC/MicroRabbit.Infrastructure.IoC.csproj", "M
 COPY ["MicroRabbit.Domain.Core/MicroRabbit.Domain.Core.csproj", "MicroRabbit.Domain.Core/"]
 COPY ["MicroRabbit.Infrastructure.Bus/MicroRabbit.Infrastructure.Bus.csproj", "MicroRabbit.Infrastructure.Bus/"]
 COPY ["MicroRabbit.Orders.Application/MicroRabbit.Orders.Application.csproj", "MicroRabbit.Orders.Application/"]
+COPY ["MicroRabbit.Application/MicroRabbit.Application.csproj", "MicroRabbit.Application/"]
 COPY ["MicroRabbit.Orders.Domain/MicroRabbit.Orders.Domain.csproj", "MicroRabbit.Orders.Domain/"]
 COPY ["MicroRabbit.Orders.Data/MicroRabbit.Orders.Data.csproj", "MicroRabbit.Orders.Data/"]
+COPY ["MicroRabbit.Data/MicroRabbit.Data.csproj", "MicroRabbit.Data/"]
+COPY ["MicroRabbit.Orders.Infrastructure.Synchronous/MicroRabbit.Orders.Infrastructure.Synchronous.csproj", "MicroRabbit.Orders.Infrastructure.Synchronous/"]
 RUN dotnet restore "MicroRabbit.Orders.Api/MicroRabbit.Orders.Api.csproj"
 COPY . .
 WORKDIR "/src/MicroRabbit.Orders.Api"
