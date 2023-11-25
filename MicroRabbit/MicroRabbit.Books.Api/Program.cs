@@ -22,7 +22,7 @@ namespace MicroRabbit.Books.Api
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddDbContext<BookDbContext>(options =>
-            {//>>>>>> TO DO : add Trusted_Connection=True; to the connection string
+            {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("BookDbConnection"));
             });
 

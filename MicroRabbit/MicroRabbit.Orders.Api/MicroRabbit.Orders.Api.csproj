@@ -20,10 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MicroRabbit.Orders.Infrastructure.Http\MicroRabbit.Orders.Infrastructure.Synchronous.csproj" />
     <ProjectReference Include="..\MicroRabbit.Infrastructure.IoC\MicroRabbit.Infrastructure.IoC.csproj" />
     <ProjectReference Include="..\MicroRabbit.Orders.Application\MicroRabbit.Orders.Application.csproj" />
     <ProjectReference Include="..\MicroRabbit.Orders.Data\MicroRabbit.Orders.Data.csproj" />
+    <ProjectReference Include="..\MicroRabbit.Orders.Infrastructure.Synchronous\MicroRabbit.Orders.Infrastructure.Synchronous.csproj" />
   </ItemGroup>
 
 </Project>

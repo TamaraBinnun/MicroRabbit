@@ -11,9 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MicroRabbit\MicroRabbit.Domain.Core\MicroRabbit.Domain.Core.csproj" />
-    <ProjectReference Include="..\MicroRabbit\MicroRabbit.Orders.Application\MicroRabbit.Orders.Application.csproj" />
-    <ProjectReference Include="..\MicroRabbit\MicroRabbit.Orders.Domain\MicroRabbit.Orders.Domain.csproj" />
+    <ProjectReference Include="..\MicroRabbit.Domain.Core\MicroRabbit.Domain.Core.csproj" />
+    <ProjectReference Include="..\MicroRabbit.Orders.Application\MicroRabbit.Orders.Application.csproj" />
+    <ProjectReference Include="..\MicroRabbit.Orders.Domain\MicroRabbit.Orders.Domain.csproj" />
   </ItemGroup>
 
 </Project>

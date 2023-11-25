@@ -19,8 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MicroRabbit.Data\MicroRabbit.Data.csproj" />
     <ProjectReference Include="..\MicroRabbit.Books.Domain\MicroRabbit.Books.Domain.csproj" />
+    <ProjectReference Include="..\MicroRabbit.Data\MicroRabbit.Data.csproj" />
   </ItemGroup>
 
 </Project>

@@ -9,8 +9,6 @@ using MicroRabbit.Orders.Domain.Commands;
 using MicroRabbit.Orders.Domain.Interfaces;
 using MicroRabbit.Orders.Infrastructure.Synchronous.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
@@ -23,7 +21,7 @@ namespace MicroRabbit.Orders.Api
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddDbContext<OrderDbContext>(options =>
-            {//>>>>>> TO DO : add Trusted_Connection=True; to the connection string
+            {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("OrderDbConnection"));
             });
 

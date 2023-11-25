@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MicroRabbit.Application\MicroRabbit.Application.csproj" />
+    <ProjectReference Include="..\MicroRabbit.Application\MicroRabbit.Application.csproj" />
     <ProjectReference Include="..\MicroRabbit.Books.Domain\MicroRabbit.Books.Domain.csproj" />
   </ItemGroup>
 

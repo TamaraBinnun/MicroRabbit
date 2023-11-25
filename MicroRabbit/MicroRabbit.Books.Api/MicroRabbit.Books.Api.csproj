@@ -22,8 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\MicroRabbit.Books.Application\MicroRabbit.Books.Application.csproj" />
     <ProjectReference Include="..\MicroRabbit.Books.Data\MicroRabbit.Books.Data.csproj" />
-    <ProjectReference Include="..\MicroRabbit.Books.Domain\MicroRabbit.Books.Domain.csproj" />
-    <ProjectReference Include="..\MicroRabbit.Domain.Core\MicroRabbit.Domain.Core.csproj" />
     <ProjectReference Include="..\MicroRabbit.Infrastructure.IoC\MicroRabbit.Infrastructure.IoC.csproj" />
   </ItemGroup>
 
