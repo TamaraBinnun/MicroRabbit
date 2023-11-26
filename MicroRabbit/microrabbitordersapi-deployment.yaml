@@ -29,7 +29,7 @@ spec:
    ports:
       - port: 80
         targetPort: 80   
-        nodePort: 30000
+        nodePort: 30001
    selector:
       app: ordersapi
 ---
