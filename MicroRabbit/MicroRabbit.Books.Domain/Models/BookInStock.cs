@@ -1,18 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MicroRabbit.Domain.Core.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace MicroRabbit.Books.Domain.Models
 {
-    public class BookInStock
+    public class BookInStock : BaseModel
     {
-        [Key]
-        public int Id { get; set; }
-
         public int BookId { get; set; }
 
         public int Units { get; set; }
-
-        public DateTime CreatedDate { get; set; }
-
-        public DateTime LastUpdatedDate { get; set; }
     }
 }

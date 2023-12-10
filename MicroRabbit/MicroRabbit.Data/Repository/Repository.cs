@@ -1,12 +1,13 @@
 ﻿using MicroRabbit.Domain.Core.Dtos;
 using MicroRabbit.Domain.Core.Interfaces;
+using MicroRabbit.Domain.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace MicroRabbit.Data.Repository
 {
     public class Repository<T> : ReadRepository<T>, IRepository<T>
-        where T : class
+        where T : BaseModel
     {
         private readonly DbContext _context;
         private readonly DbSet<T> _dbSet;

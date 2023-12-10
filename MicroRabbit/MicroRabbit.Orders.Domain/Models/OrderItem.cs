@@ -1,13 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MicroRabbit.Domain.Core.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MicroRabbit.Orders.Domain.Models
 {
-    public class OrderItem
+    public class OrderItem : BaseModel
     {
-        [Key]
-        public int Id { get; set; }
-
         public int OrderId { get; set; }
 
         public int BookId { get; set; }
@@ -16,10 +14,6 @@ namespace MicroRabbit.Orders.Domain.Models
 
         [Column(TypeName = "decimal(5, 2)")]
         public decimal UnitPrice { get; set; }
-
-        public DateTime CreatedDate { get; set; }
-
-        public DateTime LastUpdatedDate { get; set; }
 
         public Book Book { get; set; } = null!;
     }

@@ -1,20 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MicroRabbit.Domain.Core.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace MicroRabbit.Orders.Domain.Models
 {
-    public class OrderStatus
+    public class OrderStatus : BaseModel
     {
-        [Key]
-        public int Id { get; set; }
-
         public int Status { get; set; }
 
         [Required]
         [MaxLength(50)]
         public string Description { get; set; } = null!;
-
-        public DateTime CreatedDate { get; set; }
-
-        public DateTime LastUpdatedDate { get; set; }
     }
 }

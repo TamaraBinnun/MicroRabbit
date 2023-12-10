@@ -1,12 +1,13 @@
 ﻿using MicroRabbit.Domain.Core.Dtos;
 using MicroRabbit.Domain.Core.Interfaces;
+using MicroRabbit.Domain.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace MicroRabbit.Data.Repository
 {
     public class ReadRepository<T> : IReadRepository<T>
-        where T : class
+        where T : BaseModel
     {
         private readonly DbContext _context;
         private readonly DbSet<T> _dbSet;
@@ -27,9 +28,9 @@ namespace MicroRabbit.Data.Repository
             return await _dbSet.FindAsync(id);
         }
 
-        public Task<bool> IsExistAsync(int id)
+        public async Task<bool> IsExistAsync(int id)
         {
-            return await _dbSet.AnyAsync(e => e.id == id);
+            return await _dbSet.AnyAsync(e => e.Id == id);
         }
 
         public async Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> filter = null,

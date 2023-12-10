@@ -1,13 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MicroRabbit.Domain.Core.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MicroRabbit.Books.Domain.Models
 {
-    public class Book
+    public class Book : BaseModel
     {
-        [Key]
-        public int Id { get; set; }
-
         [Required]
         [MaxLength(50)]
         public string Title { get; set; } = null!;
@@ -28,9 +26,5 @@ namespace MicroRabbit.Books.Domain.Models
 
         [Required]
         public string CoverImage { get; set; } = null!;
-
-        public DateTime CreatedDate { get; set; }
-
-        public DateTime LastUpdatedDate { get; set; }
     }
 }

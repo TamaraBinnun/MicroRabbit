@@ -1,18 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MicroRabbit.Domain.Core.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace MicroRabbit.Books.Domain.Models
 {
-    public class BookCategory
+    public class BookCategory : BaseModel
     {
-        [Key]
-        public int Id { get; set; }
-
         public int BookId { get; set; }
 
         public int CategoryId { get; set; }
-
-        public DateTime CreatedDate { get; set; }
-
-        public DateTime LastUpdatedDate { get; set; }
     }
 }
