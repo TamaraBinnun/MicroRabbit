@@ -7,12 +7,12 @@ namespace MicroRabbit.Orders.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class OrderController : ControllerBase
+    public class OrdersController : ControllerBase
     {
-        private readonly ILogger<OrderController> _logger;
+        private readonly ILogger<OrdersController> _logger;
         private readonly IOrderService _orderService;
 
-        public OrderController(ILogger<OrderController> logger,
+        public OrdersController(ILogger<OrdersController> logger,
                                 IOrderService orderService)
         {
             _logger = logger;

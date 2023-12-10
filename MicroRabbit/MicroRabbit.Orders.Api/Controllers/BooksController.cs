@@ -6,12 +6,12 @@ namespace MicroRabbit.Orders.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class BookController : ControllerBase
+    public class BooksController : ControllerBase
     {
-        private readonly ILogger<BookController> _logger;
+        private readonly ILogger<BooksController> _logger;
         private readonly IBookService _bookService;
 
-        public BookController(ILogger<BookController> logger,
+        public BooksController(ILogger<BooksController> logger,
             IBookService bookService)
         {
             _logger = logger;
