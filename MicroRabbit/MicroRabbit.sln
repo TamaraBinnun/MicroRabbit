@@ -59,8 +59,8 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8S", "K8S", "{5BF29DA3-5D6C-42F7-9543-1FF830550FA7}"
 	ProjectSection(SolutionItems) = preProject
-		microrabbitbooksapi-deployment.yaml = microrabbitbooksapi-deployment.yaml
-		microrabbitordersapi-deployment.yaml = microrabbitordersapi-deployment.yaml
+		ingress.yaml = ingress.yaml
+		rabbitmq-deployment.yaml = rabbitmq-deployment.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{A8CA426A-BB29-48D2-8DFF-AC4B8FA07BFF}"
@@ -74,6 +74,21 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure.Synchronous", "Infrastructure.Synchronous", "{37CF105C-D915-4F5B-B046-7A1F014505EA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroRabbit.Orders.Infrastructure.Synchronous", "MicroRabbit.Orders.Infrastructure.Synchronous\MicroRabbit.Orders.Infrastructure.Synchronous.csproj", "{73078280-D75B-47DA-B4F7-0BEC07FDB1A7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "book", "book", "{558F7781-2482-4537-9353-B36EA9C07481}"
+	ProjectSection(SolutionItems) = preProject
+		book-api-deployment.yaml = book-api-deployment.yaml
+		book-mssql-deployment.yaml = book-mssql-deployment.yaml
+		book-mssql-pvc.yaml = book-mssql-pvc.yaml
+		book-mssql-migration-job.yaml = book-mssql-migration-job.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "order", "order", "{3C86747B-CAA5-4152-A75B-5FA7F364CB76}"
+	ProjectSection(SolutionItems) = preProject
+		order-api-deployment.yaml = order-api-deployment.yaml
+		order-mssql-deployment.yaml = order-mssql-deployment.yaml
+		order-mssql-pvc.yaml = order-mssql-pvc.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -171,6 +186,8 @@ Global
 		{94EFEFC4-C950-4598-9E4A-7D3602D3BCF0} = {C7EDB6C7-9CC0-46B1-85B8-A316B7F00282}
 		{37CF105C-D915-4F5B-B046-7A1F014505EA} = {3F730D03-267E-430D-965D-1AC970F70E3F}
 		{73078280-D75B-47DA-B4F7-0BEC07FDB1A7} = {37CF105C-D915-4F5B-B046-7A1F014505EA}
+		{558F7781-2482-4537-9353-B36EA9C07481} = {5BF29DA3-5D6C-42F7-9543-1FF830550FA7}
+		{3C86747B-CAA5-4152-A75B-5FA7F364CB76} = {5BF29DA3-5D6C-42F7-9543-1FF830550FA7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {33B0DE8F-69CB-494A-9CE3-B22E484F0A6C}

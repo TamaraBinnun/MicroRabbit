@@ -23,7 +23,12 @@ namespace MicroRabbit.Books.Api
 
             builder.Services.AddDbContext<BookDbContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("BookDbConnection"));
+                var server = builder.Configuration.GetConnectionString("BookDb:Server");
+                var database = builder.Configuration.GetConnectionString("BookDb:Database");
+                var user = builder.Configuration.GetConnectionString("BookDb:User");
+                var password = builder.Configuration.GetConnectionString("BookDb:Password");
+                var dbConnection = string.Format(builder.Configuration.GetConnectionString("BookDbConnection")!, server, database, user, password);
+                options.UseSqlServer(dbConnection);
             });
 
             // Add services to the container.

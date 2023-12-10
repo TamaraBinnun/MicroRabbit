@@ -27,6 +27,11 @@ namespace MicroRabbit.Data.Repository
             return await _dbSet.FindAsync(id);
         }
 
+        public Task<bool> IsExistAsync(int id)
+        {
+            return await _dbSet.AnyAsync(e => e.id == id);
+        }
+
         public async Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> filter = null,
                                             Func<IQueryable<T>,
                                             IOrderedQueryable<T>> orderBy = null,

@@ -13,5 +13,13 @@ namespace MicroRabbit.Orders.Data.Context
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<OrderStatus> OrderStatuses { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Book>().HasMany(b => b.OrderItems).WithOne(o => o.Book!).HasForeignKey(o => o.BookId);
+            modelBuilder.Entity<OrderItem>().HasOne(o => o.Book).WithMany(b => b.OrderItems).HasForeignKey(b => b.OrderId);
+        }
     }
 }

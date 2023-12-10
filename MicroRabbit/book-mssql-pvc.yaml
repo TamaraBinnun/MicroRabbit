@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: book-mssql-base-volume
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 200Mi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: book-mssql-data-volume
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 200Mi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: book-mssql-log-volume
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 200Mi

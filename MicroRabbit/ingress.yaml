@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: microrabbit-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    ingressclass.kubernetes.io/is-default-class: "true"
+spec:
+  rules:
+  - host: books.co.il
+    http:
+      paths:
+      - pathType: Prefix
+        path: /api/book
+        backend:
+          service:
+            name: microrabbitbooksapi-clusterip
+            port:
+              number: 80
+  - host: orders.co.il
+    http:
+      paths:
+      - pathType: Prefix
+        path: /api/order
+        backend:
+          service:
+            name: microrabbitordersapi-clusterip
+            port:
+              number: 80
+      - pathType: Prefix
+        path: /api/book
+        backend:
+          service:
+            name: microrabbitordersapi-clusterip
+            port:
+              number: 80

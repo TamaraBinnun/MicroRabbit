@@ -20,5 +20,7 @@ namespace MicroRabbit.Orders.Domain.Models
         public DateTime CreatedDate { get; set; }
 
         public DateTime LastUpdatedDate { get; set; }
+
+        public Book Book { get; set; } = null!;
     }
 }
