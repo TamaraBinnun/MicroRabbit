@@ -40,7 +40,7 @@ namespace MicroRabbit.Infrastructure.Bus
             {
                 var factory = new ConnectionFactory()
                 {
-                    Uri = new Uri(_config["RabbitMqConnection"]!),
+                    Uri = new Uri(_config.GetConnectionString("RabbitMq")!),
 
                     /*HostName = "host.docker.internal",
                     UserName = _config["RabbitMQ:UserName"],
@@ -108,7 +108,7 @@ namespace MicroRabbit.Infrastructure.Bus
 
             var factory = new ConnectionFactory()
             {
-                Uri = new Uri(_config["RabbitMqConnection"]!),
+                Uri = new Uri(_config.GetConnectionString("RabbitMq")!),
                 DispatchConsumersAsync = true
 
                 /*HostName = "host.docker.internal",

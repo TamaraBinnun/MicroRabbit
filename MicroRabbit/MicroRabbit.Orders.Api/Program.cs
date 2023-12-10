@@ -26,7 +26,7 @@ namespace MicroRabbit.Orders.Api
                 var database = builder.Configuration.GetConnectionString("OrderDb:Database");
                 var user = builder.Configuration.GetConnectionString("OrderDb:User");
                 var password = builder.Configuration.GetConnectionString("OrderDb:Password");
-                var dbConnection = string.Format(builder.Configuration.GetConnectionString("OrderDbConnection")!, server, database, user, password);
+                var dbConnection = string.Format(builder.Configuration.GetConnectionString("Template")!, server, database, user, password);
                 options.UseSqlServer(dbConnection);
             });
 

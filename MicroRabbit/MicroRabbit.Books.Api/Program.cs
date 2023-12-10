@@ -27,7 +27,7 @@ namespace MicroRabbit.Books.Api
                 var database = builder.Configuration.GetConnectionString("BookDb:Database");
                 var user = builder.Configuration.GetConnectionString("BookDb:User");
                 var password = builder.Configuration.GetConnectionString("BookDb:Password");
-                var dbConnection = string.Format(builder.Configuration.GetConnectionString("BookDbConnection")!, server, database, user, password);
+                var dbConnection = string.Format(builder.Configuration.GetConnectionString("Template")!, server, database, user, password);
                 options.UseSqlServer(dbConnection);
             });
 
