@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: order-mssql-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-mssql-deployment
+  labels:
+    app: ordermssql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ordermssql
+  template:
+    metadata:
+      labels:
+        app: ordermssql
+    spec:
+      containers:
+      - name: mssql
+        image: mcr.microsoft.com/mssql/server:2022-latest #creating a container from this image, with empty data. server name:"localhost,1433"
+        ports:
+        - containerPort: 1433
+        env:
+        - name: MSSQL_PID
+          value: "Express"
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: MSSQL_SA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mssql-secret
+              key: SA_PASSWORD     
+        volumeMounts:  
+        - name: order-mssql
+          mountPath: /var/opt/mssql/data
+      volumes:   
+      - name: order-mssql
+        persistentVolumeClaim:
+          claimName: order-mssql-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-mssql-clusterip
+spec:
+  type: ClusterIP
+  selector:
+    app: ordermssql
+  ports:
+    - port: 1433
+      targetPort: 1433
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-mssql-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: ordermssql
+  ports:
+    - port: 1433
+      targetPort: 1433

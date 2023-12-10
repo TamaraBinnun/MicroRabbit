@@ -1,18 +1,29 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: book-mssql-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Mi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mssql-deployment
+  name: book-mssql-deployment
   labels:
-    app: mssql
+    app: bookmssql
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mssql
+      app: bookmssql
   template:
     metadata:
       labels:
-        app: mssql
+        app: bookmssql
     spec:
       containers:
       - name: mssql
@@ -28,40 +39,23 @@ spec:
           valueFrom:
             secretKeyRef:
               name: mssql-secret
-              key: SA_PASSWORD
-        - name: MSSQL_DATA_DIR
-          value: /var/opt/mssql/data
-        - name: MSSQL_LOG_DIR
-          value: /var/opt/mssql/log
-          
-        volumeMounts:
-        - name: mssql-base-volume
-          mountPath: /var/opt/mssql
-        - name: mssql-log-volume
-          mountPath: /var/opt/mssql/log
-        - name: mssql-data-volume
+              key: SA_PASSWORD      
+        volumeMounts:  
+        - name: book-mssql
           mountPath: /var/opt/mssql/data
-      volumes:
-      - name: mssql-base-volume
+      volumes:     
+      - name: book-mssql
         persistentVolumeClaim:
-          claimName: mssql-base-volume
-      - name: mssql-data-volume
-        persistentVolumeClaim:
-          claimName: mssql-data-volume
-      - name: mssql-log-volume
-        persistentVolumeClaim:
-          claimName: mssql-log-volume
+          claimName: book-mssql-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mssql-clusterip
-labels:
-  app: mssql
+  name: book-mssql-clusterip
 spec:
   type: ClusterIP
   selector:
-    app: mssql
+    app: bookmssql
   ports:
     - port: 1433
       targetPort: 1433
@@ -69,13 +63,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mssql-loadbalancer
-labels:
-  app: mssql
+  name: book-mssql-loadbalancer
 spec:
   type: LoadBalancer
   selector:
-    app: mssql
+    app: bookmssql
   ports:
     - port: 1433
       targetPort: 1433

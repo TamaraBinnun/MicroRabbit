@@ -79,7 +79,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "book", "book", "{558F7781-2
 	ProjectSection(SolutionItems) = preProject
 		book-api-deployment.yaml = book-api-deployment.yaml
 		book-mssql-deployment.yaml = book-mssql-deployment.yaml
-		book-mssql-pvc.yaml = book-mssql-pvc.yaml
 		book-mssql-migration-job.yaml = book-mssql-migration-job.yaml
 	EndProjectSection
 EndProject
@@ -87,7 +86,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "order", "order", "{3C86747B
 	ProjectSection(SolutionItems) = preProject
 		order-api-deployment.yaml = order-api-deployment.yaml
 		order-mssql-deployment.yaml = order-mssql-deployment.yaml
-		order-mssql-pvc.yaml = order-mssql-pvc.yaml
 	EndProjectSection
 EndProject
 Global
