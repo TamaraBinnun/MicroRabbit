@@ -79,7 +79,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "book", "book", "{558F7781-2
 	ProjectSection(SolutionItems) = preProject
 		book-api-deployment.yaml = book-api-deployment.yaml
 		book-mssql-deployment.yaml = book-mssql-deployment.yaml
-		book-mssql-migration-job.yaml = book-mssql-migration-job.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "order", "order", "{3C86747B-CAA5-4152-A75B-5FA7F364CB76}"

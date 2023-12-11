@@ -38,8 +38,8 @@ spec:
         - name: MSSQL_SA_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mssql-secret
-              key: SA_PASSWORD     
+              name: order-secret
+              key: ConnectionStrings__OrderDb__SA_Password    
         volumeMounts:  
         - name: order-mssql
           mountPath: /var/opt/mssql/data

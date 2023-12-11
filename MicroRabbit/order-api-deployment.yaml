@@ -19,6 +19,11 @@ spec:
               image: tamarabinnun/microrabbitordersapi
               ports:
               - containerPort: 80
+              envFrom:
+                - secretRef:
+                    name: order-secret
+                - secretRef:
+                    name: rabitmq-secret
 ---
 apiVersion: v1
 kind: Service

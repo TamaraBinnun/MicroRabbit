@@ -38,8 +38,8 @@ spec:
         - name: MSSQL_SA_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mssql-secret
-              key: SA_PASSWORD      
+              name: book-secret
+              key: ConnectionStrings__BookDb__SA_Password      
         volumeMounts:  
         - name: book-mssql
           mountPath: /var/opt/mssql/data
