@@ -22,10 +22,10 @@ namespace MicroRabbit.Orders.Api
 
             builder.Services.AddDbContext<OrderDbContext>(options =>
             {
-                var server = builder.Configuration.GetConnectionString("OrderDb:Server");
-                var database = builder.Configuration.GetConnectionString("OrderDb:Database");
-                var user = builder.Configuration.GetConnectionString("OrderDb:User");
-                var password = builder.Configuration.GetConnectionString("OrderDb:Password");
+                var server = builder.Configuration.GetConnectionString("Server");
+                var database = builder.Configuration.GetConnectionString("Database");
+                var user = builder.Configuration.GetConnectionString("User");
+                var password = builder.Configuration.GetConnectionString("Password");
                 var dbConnection = string.Format(builder.Configuration.GetConnectionString("Template")!, server, database, user, password);
                 options.UseSqlServer(dbConnection);
             });

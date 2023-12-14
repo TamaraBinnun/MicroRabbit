@@ -18,38 +18,34 @@ spec:
             - name:  rabbitmq
               image: rabbitmq:3.13.0-rc.2-management
               ports:
-              - name: rabbitmq-management-port
+              - name: management-port
                 containerPort: 15672
-              - name: rabbitmq-internal-port
+              - name: internal-port
                 containerPort: 5672
               env:
-              - name: RABBIT_HOST 
-                value: "rabbitmq-cluster.rabbitmq.svc.cluster.local"
-              - name: RABBIT_PORT
-                value: "5672"
               - name: RABBITMQ_DEFAULT_USER
                 valueFrom:
                   secretKeyRef:
-                    name: rabbitmq-publisher
-                    key: RABBIT_USERNAME
+                    name: rabbitmq-secret
+                    key: RabbitMq__UserName
               - name: RABBITMQ_DEFAULT_PASS
                 valueFrom:
                   secretKeyRef:
-                    name: rabbitmq-publisher
-                    key: RABBIT_PASSWORD
+                    name: rabbitmq-secret
+                    key: RabbitMq__Password
 ---
 apiVersion: v1
 kind: Service
 metadata:
-   name: rabbitmq-loadBalancer
+   name: rabbitmq-loadbalancer
 spec:
    type: LoadBalancer
    ports:
-      - name:  rabbitmq-management-port
-        port: 15672
-        targetPort: 15672   
-      - name: rabbitmq-internal-port
-        port: 5672
+      - name: management-port
+        port: 15677
+        targetPort: 15672
+      - name: internal-port
+        port: 5677
         targetPort: 5672    
    selector:
       app: rabbitmq
@@ -61,11 +57,11 @@ metadata:
 spec:
    type: ClusterIP
    ports:
-      - name: rabbitmq-management-port
-        port: 15672
-        targetPort: 15672    
-      - name: rabbitmq-internal-port
-        port: 5672
-        targetPort: 15672       
+      - name: management-port
+        port: 15677
+        targetPort: 15672
+      - name: internal-port
+        port: 5677
+        targetPort: 5672       
    selector:
       app: rabbitmq

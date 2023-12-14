@@ -5,10 +5,10 @@ using MicroRabbit.Domain.Core.EventHandlers;
 using MicroRabbit.Domain.Core.Events;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
+using System.Text.Json;
 
 namespace MicroRabbit.Infrastructure.Bus
 {
@@ -18,6 +18,8 @@ namespace MicroRabbit.Infrastructure.Bus
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IConfiguration _config;
         private readonly Dictionary<string, EventData> _eventData;//event name => type + all it's subscribers
+        private readonly IModel? _channel;
+        private readonly IConnection? _connection;
 
         public RabbitMQBus(IMediator mediator, IServiceScopeFactory serviceScopeFactory, IConfiguration config)
         {
@@ -25,6 +27,58 @@ namespace MicroRabbit.Infrastructure.Bus
             _serviceScopeFactory = serviceScopeFactory;
             _config = config;
             _eventData = new Dictionary<string, EventData>();
+            var factory = GetConnectionFactory();
+
+            try
+            {
+                _connection = factory.CreateConnection();
+                _channel = _connection.CreateModel();
+                _connection.ConnectionShutdown += Connection_ConnectionShutdown;
+                Console.WriteLine("Connected to RabbitMQBus");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Couldn't connect to the RabbitMQBus: {ex.Message}");
+            }
+        }
+
+        private ConnectionFactory GetConnectionFactory()
+        {
+            Console.WriteLine($"HostName={_config["RabbitMq:HostName"]}");
+            Console.WriteLine($"UserName={_config["RabbitMQ:UserName"]}");
+
+            var factory = new ConnectionFactory()
+            {
+                HostName = _config["RabbitMq:HostName"],
+                Port = int.Parse(_config["RabbitMq:Port"]!),
+                UserName = _config["RabbitMQ:UserName"],
+                Password = _config["RabbitMQ:Password"],
+                Ssl = new SslOption
+                {
+                    Enabled = false
+                },
+                DispatchConsumersAsync = true,
+            };
+
+            return factory;
+        }
+
+        private void Connection_ConnectionShutdown(object? sender, ShutdownEventArgs e)
+        {
+            Console.WriteLine($"RabbitMQBus Connection Shutdown");
+        }
+
+        public void Dispose()
+        {
+            Console.WriteLine($"RabbitMQBus was disposed");
+            if (_channel != null && _channel.IsOpen)
+            {
+                _channel.Close();
+            }
+            if (_connection != null && _connection.IsOpen)
+            {
+                _connection.Close();
+            }
         }
 
         public async Task<bool> SendCommand<C>(C command) where C : Command
@@ -35,35 +89,24 @@ namespace MicroRabbit.Infrastructure.Bus
 
         public bool Publish<E>(E @event) where E : Event
         {
+            if (_channel == null) throw new NullReferenceException($"{nameof(_channel)} is null");
+            if (!_channel.IsOpen) throw new ApplicationException("Publish channel was closed");
+
             var response = false;
             try
             {
-                var factory = new ConnectionFactory()
-                {
-                    Uri = new Uri(_config.GetConnectionString("RabbitMq")!),
+                var eventName = @event.GetType().Name;
+                _channel.QueueDeclare(eventName, false, false, false, null);
+                string message = JsonSerializer.Serialize(@event);
+                var body = Encoding.UTF8.GetBytes(message);
+                _channel.BasicPublish("", eventName, null, body);
 
-                    /*HostName = "host.docker.internal",
-                    UserName = _config["RabbitMQ:UserName"],
-                    Password = _config["RabbitMQ:Password"],*/
-                };
-
-                using (var connection = factory.CreateConnection())
-                {
-                    using (var channel = connection.CreateModel())
-                    {
-                        var eventName = @event.GetType().Name;
-                        channel.QueueDeclare(eventName, false, false, false, null);
-                        string message = JsonConvert.SerializeObject(@event);
-                        var body = Encoding.UTF8.GetBytes(message);
-                        channel.BasicPublish("", eventName, null, body);
-                    }
-                }
                 Console.WriteLine("The message was sent");
                 response = true;
             }
-            catch
+            catch (Exception ex)
             {
-                //write to log
+                Console.WriteLine($"The message was not sent: {ex.Message}");
             }
             return response;
         }
@@ -73,6 +116,9 @@ namespace MicroRabbit.Infrastructure.Bus
             where E : Event
             where EH : IEventHandler<E>
         {
+            if (_channel == null) throw new NullReferenceException($"{nameof(_channel)} is null");
+            if (!_channel.IsOpen) throw new ApplicationException("Subscribe channel was closed");
+
             SubscribeValidate<E, EH>();
             SubscribeConsumer<E>();
         }
@@ -106,24 +152,10 @@ namespace MicroRabbit.Infrastructure.Bus
         {
             var eventName = typeof(E).Name;
 
-            var factory = new ConnectionFactory()
-            {
-                Uri = new Uri(_config.GetConnectionString("RabbitMq")!),
-                DispatchConsumersAsync = true
-
-                /*HostName = "host.docker.internal",
-                UserName = _config["RabbitMQ:UserName"],
-                Password = _config["RabbitMQ:Password"],*/
-            };
-
-            var connection = factory.CreateConnection();
-
-            var channel = connection.CreateModel();
-
-            channel.QueueDeclare(eventName, false, false, false, null);
-            var consumer = new AsyncEventingBasicConsumer(channel);
+            _channel!.QueueDeclare(eventName, false, false, false, null);
+            var consumer = new AsyncEventingBasicConsumer(_channel);
             consumer.Received += ConsumerReceived;
-            channel.BasicConsume(eventName, true, consumer);
+            _channel.BasicConsume(eventName, true, consumer);
 
             Console.WriteLine("The message was received");
         }
@@ -156,7 +188,7 @@ namespace MicroRabbit.Infrastructure.Bus
 
                     var message = Encoding.UTF8.GetString(eventBody);
                     var eventType = _eventData[eventName].EventType;
-                    var @event = JsonConvert.DeserializeObject(message, eventType)!;
+                    var @event = JsonSerializer.Deserialize(message, eventType)!;
 
                     var method = eventHandlerType.GetMethod("Handle")!;
                     await (Task)method.Invoke(eventHandler, new object[] { @event })!;

@@ -10,9 +10,10 @@ namespace MicroRabbit.Books.Application.Profiles
         public BookProfile()
         {
             CreateMap<Book, BookResponse>();
-            CreateMap<AddBookRequest, Book>();//.ForMember(x => x.CreatedDate = DateTime.Now);
-            CreateMap<UpdateBookRequest, Book>();//.ForMember(x => x.LastUpdatedDate = DateTime.Now);
-
+            CreateMap<AddBookRequest, Book>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.Now));
+            CreateMap<UpdateBookRequest, Book>()
+                .ForMember(dest => dest.LastUpdatedDate, opt => opt.MapFrom(src => DateTime.Now));
             CreateMap<StockResponse, BookUnits>().ReverseMap();
         }
     }

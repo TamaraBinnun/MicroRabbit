@@ -19,11 +19,14 @@ spec:
               image: tamarabinnun/microrabbitordersapi
               ports:
               - containerPort: 80
+              env:
+                - name: ASPNETCORE_ENVIRONMENT
+                  value: "k8s"
               envFrom:
                 - secretRef:
                     name: order-secret
                 - secretRef:
-                    name: rabitmq-secret
+                    name: rabbitmq-secret
 ---
 apiVersion: v1
 kind: Service

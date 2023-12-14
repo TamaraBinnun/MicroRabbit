@@ -7,7 +7,7 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: 100Mi
+      storage: 50Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -39,10 +39,10 @@ spec:
           valueFrom:
             secretKeyRef:
               name: order-secret
-              key: ConnectionStrings__OrderDb__SA_Password    
+              key: ConnectionStrings__SA_Password    
         volumeMounts:  
         - name: order-mssql
-          mountPath: /var/opt/mssql/data
+          mountPath: /var/opt/mssql/orderdata
       volumes:   
       - name: order-mssql
         persistentVolumeClaim:

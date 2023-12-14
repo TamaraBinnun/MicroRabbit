@@ -4,8 +4,8 @@ metadata:
   name: ingress
   annotations:
     nginx.ingress.kubernetes.io/use-regex: "true"
-    ingressclass.kubernetes.io/is-default-class: "true"
 spec:
+  ingressClassName: nginx
   rules:
   - host: books.co.il
     http:
