@@ -5,7 +5,7 @@ using MicroRabbit.Orders.Domain.Models;
 
 namespace MicroRabbit.Orders.Data.Repository
 {
-    public class OrderRepository : Repository<Order>, IOrderRepository
+    public class OrderRepository : Repository<Order>, IOrdersRepository
     {
         private readonly OrderDbContext _context;
 

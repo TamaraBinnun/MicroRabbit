@@ -1,5 +1,11 @@
 using MediatR;
+using MicroRabbit.Domain.Core.Bus;
+using MicroRabbit.Domain.Core.EventHandlers;
+using MicroRabbit.Domain.Core.Events;
+using MicroRabbit.Domain.Core.Interfaces;
 using MicroRabbit.Infrastructure.IoC;
+using MicroRabbit.Infrastructure.Synchronous.Services;
+using MicroRabbit.Orders.Application.EventHandlers;
 using MicroRabbit.Orders.Application.Interfaces;
 using MicroRabbit.Orders.Application.Services;
 using MicroRabbit.Orders.Data.Context;
@@ -7,7 +13,6 @@ using MicroRabbit.Orders.Data.Repository;
 using MicroRabbit.Orders.Domain.CommandHandlers;
 using MicroRabbit.Orders.Domain.Commands;
 using MicroRabbit.Orders.Domain.Interfaces;
-using MicroRabbit.Orders.Infrastructure.Synchronous.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -30,16 +35,10 @@ namespace MicroRabbit.Orders.Api
                 options.UseSqlServer(dbConnection);
             });
 
-            builder.Services.AddHttpClient<IMicroRabbitBooksClient, HttpMicroRabbitBooksClient>((httpClient, sp) =>
+            builder.Services.AddHttpClient<ISynchronousSender, HttpSender>((httpClient, sp) =>
             {
                 httpClient.BaseAddress = new Uri(builder.Configuration["MicroRabbitBooks:BaseAddress"]!);
-                return new HttpMicroRabbitBooksClient(httpClient, sp.GetService<IConfiguration>()!);
-
-                // The GitHub API requires two headers.
-                /*httpClient.DefaultRequestHeaders.Add(
-                    HeaderNames.Accept, "application/vnd.github.v3+json");
-                httpClient.DefaultRequestHeaders.Add(
-                    HeaderNames.UserAgent, "HttpRequestsSample");*/
+                return new HttpSender(httpClient);
             });
 
             // Add services to the container.
@@ -70,6 +69,8 @@ namespace MicroRabbit.Orders.Api
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Order Microservice v1");
             });
 
+            ConfigureEventBus(app);
+
             app.UseAuthorization();
 
             app.MapControllers();
@@ -77,19 +78,33 @@ namespace MicroRabbit.Orders.Api
             app.Run();
         }
 
+        private static void ConfigureEventBus(WebApplication app)
+        { //configure microservices to subscribe to event
+            var eventBus = app.Services.GetRequiredService<IEventBus>();
+            eventBus.Subscribe<EventToUpdateBook, EventToUpdateBookHandler>();
+        }
+
         private static void RegisterServices(IServiceCollection services)
         {
             DependencyContainer.RegisterServices(services);
 
-            services.AddTransient<IBookService, BookService>();
-            services.AddTransient<IBookRepository, BookRepository>();
+            services.AddTransient<IBooksService, BooksService>();
+            services.AddTransient<IBooksRepository, BookRepository>();
 
-            services.AddTransient<IOrderService, OrderService>();
-            services.AddTransient<IOrderRepository, OrderRepository>();
+            services.AddTransient<IOrderBooksService, OrderBooksService>();
+
+            services.AddTransient<IOrdersService, OrdersService>();
+            services.AddTransient<IOrdersRepository, OrderRepository>();
+
+            services.AddTransient<IOrderItemsService, OrderItemsService>();
+            services.AddTransient<IOrderItemsRepository, OrderItemRepository>();
 
             services.AddTransient<OrderDbContext>();
 
-            services.AddTransient<IRequestHandler<UpdateStockCommand, bool>, UpdateStockCommandHandler>();
+            services.AddTransient<IRequestHandler<UpdateOrderedBooksCommand, bool>, UpdateOrderedBooksCommandHandler>();
+
+            services.AddTransient<IEventHandler<EventToUpdateBook>, EventToUpdateBookHandler>();
+            services.AddTransient<EventToUpdateBookHandler>();
         }
     }
 }

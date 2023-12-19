@@ -6,13 +6,7 @@
 
         public string Title { get; set; } = null!;
 
-        public int PublicationId { get; set; }
-
-        public decimal Price { get; set; }
-
-        public string Description { get; set; } = null!;
-
-        public string CoverImage { get; set; } = null!;
+        public int ExternalId { get; set; }
 
         public DateTime CreatedDate { get; set; }
     }

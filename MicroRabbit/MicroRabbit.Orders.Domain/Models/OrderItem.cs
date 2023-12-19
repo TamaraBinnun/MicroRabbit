@@ -10,7 +10,7 @@ namespace MicroRabbit.Orders.Domain.Models
 
         public int BookId { get; set; }
 
-        public int Quantity { get; set; }
+        public int OrderedUnits { get; set; }
 
         [Column(TypeName = "decimal(5, 2)")]
         public decimal UnitPrice { get; set; }

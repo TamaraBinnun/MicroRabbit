@@ -1,8 +1,8 @@
-using MicroRabbit.Books.Application.Dtos;
+using AutoMapper;
+using MicroRabbit.Books.Application.Dtos.Books;
 using MicroRabbit.Books.Application.Interfaces;
 using MicroRabbit.Domain.Core.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace MicroRabbit.Books.Api.Controllers
 {
@@ -11,13 +11,16 @@ namespace MicroRabbit.Books.Api.Controllers
     public class BooksController : ControllerBase
     {
         private readonly ILogger<BooksController> _logger;
-        private readonly IBookService _bookService;
+        private readonly IBooksService _bookService;
+        private readonly IMapper _mapper;
 
         public BooksController(ILogger<BooksController> logger,
-            IBookService bookService)
+            IBooksService bookService,
+            IMapper mapper)
         {
             _logger = logger;
             _bookService = bookService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -53,7 +56,14 @@ namespace MicroRabbit.Books.Api.Controllers
 
             var bookResponse = await _bookService.AddAsync(addBookRequest);
 
-            return CreatedAtRoute(nameof(GetBookAsync), new { Id = bookResponse.Id }, bookResponse);
+            if (bookResponse != null)
+            {
+                //send event EventToUpdateBook to rabbitmq for updating book data in order microservice
+                var bookData = _mapper.Map<CommonBookData>(bookResponse);
+                await _bookService.CreateEventToUpdateBookAsync(bookData);
+            }
+
+            return CreatedAtRoute(nameof(GetBookAsync), new { Id = bookResponse?.Id }, bookResponse);
         }
 
         [HttpPut]
@@ -70,6 +80,10 @@ namespace MicroRabbit.Books.Api.Controllers
             {
                 return NotFound();
             }
+
+            //send event EventToUpdateBook to rabbitmq for updating book data in order microservice
+            var bookData = _mapper.Map<CommonBookData>(updateBookRequest);
+            await _bookService.CreateEventToUpdateBookAsync(bookData);
 
             return Ok();
         }
@@ -88,6 +102,14 @@ namespace MicroRabbit.Books.Api.Controllers
             {
                 return NotFound();
             }
+
+            //send event EventToUpdateBook to rabbitmq for updating book data in order microservice
+            var bookData = new CommonBookData
+            {
+                BookId = id,
+                IsDeleted = true
+            };
+            await _bookService.CreateEventToUpdateBookAsync(bookData);
 
             return Ok();
         }

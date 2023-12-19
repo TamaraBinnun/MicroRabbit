@@ -71,10 +71,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroRabbit.Application", "MicroRabbit.Application\MicroRabbit.Application.csproj", "{94EFEFC4-C950-4598-9E4A-7D3602D3BCF0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure.Synchronous", "Infrastructure.Synchronous", "{37CF105C-D915-4F5B-B046-7A1F014505EA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroRabbit.Orders.Infrastructure.Synchronous", "MicroRabbit.Orders.Infrastructure.Synchronous\MicroRabbit.Orders.Infrastructure.Synchronous.csproj", "{73078280-D75B-47DA-B4F7-0BEC07FDB1A7}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "book", "book", "{558F7781-2482-4537-9353-B36EA9C07481}"
 	ProjectSection(SolutionItems) = preProject
 		book-api-deployment.yaml = book-api-deployment.yaml
@@ -86,6 +82,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "order", "order", "{3C86747B
 		order-api-deployment.yaml = order-api-deployment.yaml
 		order-mssql-deployment.yaml = order-mssql-deployment.yaml
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure.Synchronous", "Infrastructure.Synchronous", "{61781070-17A1-45CC-906C-6E266238D8F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroRabbit.Infrastructure.Synchronous", "MicroRabbit.Infrastructure.Synchronous\MicroRabbit.Infrastructure.Synchronous.csproj", "{DA47DFC1-7AAD-443E-82AA-148B674DD864}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -149,10 +149,10 @@ Global
 		{94EFEFC4-C950-4598-9E4A-7D3602D3BCF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94EFEFC4-C950-4598-9E4A-7D3602D3BCF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94EFEFC4-C950-4598-9E4A-7D3602D3BCF0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{73078280-D75B-47DA-B4F7-0BEC07FDB1A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{73078280-D75B-47DA-B4F7-0BEC07FDB1A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{73078280-D75B-47DA-B4F7-0BEC07FDB1A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{73078280-D75B-47DA-B4F7-0BEC07FDB1A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA47DFC1-7AAD-443E-82AA-148B674DD864}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA47DFC1-7AAD-443E-82AA-148B674DD864}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA47DFC1-7AAD-443E-82AA-148B674DD864}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA47DFC1-7AAD-443E-82AA-148B674DD864}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -181,10 +181,9 @@ Global
 		{E35DFF11-6A39-470B-95F5-B319CA04A8D0} = {637E5409-D8FE-4FE1-A628-7A2A05DA1803}
 		{19E99FFC-BF2D-474F-9CD7-B750129D5F2C} = {A8CA426A-BB29-48D2-8DFF-AC4B8FA07BFF}
 		{94EFEFC4-C950-4598-9E4A-7D3602D3BCF0} = {C7EDB6C7-9CC0-46B1-85B8-A316B7F00282}
-		{37CF105C-D915-4F5B-B046-7A1F014505EA} = {3F730D03-267E-430D-965D-1AC970F70E3F}
-		{73078280-D75B-47DA-B4F7-0BEC07FDB1A7} = {37CF105C-D915-4F5B-B046-7A1F014505EA}
 		{558F7781-2482-4537-9353-B36EA9C07481} = {5BF29DA3-5D6C-42F7-9543-1FF830550FA7}
 		{3C86747B-CAA5-4152-A75B-5FA7F364CB76} = {5BF29DA3-5D6C-42F7-9543-1FF830550FA7}
+		{DA47DFC1-7AAD-443E-82AA-148B674DD864} = {61781070-17A1-45CC-906C-6E266238D8F9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {33B0DE8F-69CB-494A-9CE3-B22E484F0A6C}

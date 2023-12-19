@@ -1,6 +1,4 @@
-﻿using MicroRabbit.Orders.Application.Dtos.OrderItems;
-
-namespace MicroRabbit.Orders.Application.Dtos.Orders
+﻿namespace MicroRabbit.Orders.Application.Dtos.Orders
 {
     public class OrderResponse
     {
@@ -10,6 +8,6 @@ namespace MicroRabbit.Orders.Application.Dtos.Orders
 
         public int OrderStatusId { get; set; }
 
-        private List<OrderItemResponse> OrderItems { get; set; } = new List<OrderItemResponse>();
+        public DateTime CreatedDate { get; set; }
     }
 }

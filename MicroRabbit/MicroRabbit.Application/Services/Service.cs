@@ -2,6 +2,7 @@
 using MicroRabbit.Application.Interfaces;
 using MicroRabbit.Domain.Core.Bus;
 using MicroRabbit.Domain.Core.Interfaces;
+using System.Linq.Expressions;
 
 namespace MicroRabbit.Application.Services
 {
@@ -37,10 +38,32 @@ namespace MicroRabbit.Application.Services
             return response;
         }
 
+        public async Task<IEnumerable<TResponse>> AddManyAsync(IEnumerable<AddTRequest> addRequest)
+        {
+            var entities = _mapper.Map<IEnumerable<T>>(addRequest).ToList();
+
+            entities.ForEach(_repository.Add);
+
+            await _repository.SaveChangesAsync();
+
+            var response = _mapper.Map<IEnumerable<TResponse>>(entities);//entity with the new Id
+
+            return response;
+        }
+
         public async Task<int> UpdateAsync(UpdateTRequest updateRequest)
         {
             var entity = _mapper.Map<T>(updateRequest);
             _repository.Update(entity);
+            return await _repository.SaveChangesAsync();
+        }
+
+        public async Task<int> UpdateManyAsync(IEnumerable<UpdateTRequest> updateRequest)
+        {
+            var entities = _mapper.Map<IEnumerable<T>>(updateRequest).ToList();
+
+            entities.ForEach(_repository.Update);
+
             return await _repository.SaveChangesAsync();
         }
 
@@ -53,6 +76,35 @@ namespace MicroRabbit.Application.Services
             }
 
             _repository.Delete(entity);
+            return await _repository.SaveChangesAsync();
+        }
+
+        public async Task<int> DeleteManyAsync(IEnumerable<int> ids)
+        {
+            var entities = await _repository.GetManyByIdAsync(ids);
+            if (entities == null)
+            {
+                return -1;
+            }
+
+            entities.ToList().ForEach(_repository.Delete);
+
+            return await _repository.SaveChangesAsync();
+        }
+
+        public async Task<int> DeleteManyByFilterAsync(Expression<Func<TResponse, bool>> filter)
+        {
+            var filterT = _mapper.Map<Expression<Func<T, bool>>>(filter);
+            var entities = await _repository.GetManyAsync(
+                filter: filterT);
+
+            if (entities == null)
+            {
+                return -1;
+            }
+
+            entities.ToList().ForEach(_repository.Delete);
+
             return await _repository.SaveChangesAsync();
         }
     }

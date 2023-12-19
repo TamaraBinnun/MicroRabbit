@@ -59,6 +59,9 @@ namespace MicroRabbit.Books.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int>("Units")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Books");
@@ -89,31 +92,6 @@ namespace MicroRabbit.Books.Data.Migrations
                     b.ToTable("BookCategories");
                 });
 
-            modelBuilder.Entity("MicroRabbit.Books.Domain.Models.BookInStock", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("LastUpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Units")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BooksInStock");
-                });
-
             modelBuilder.Entity("MicroRabbit.Books.Domain.Models.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -139,6 +117,40 @@ namespace MicroRabbit.Books.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("MicroRabbit.Books.Domain.Models.OrderedBook", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsStockUpdated")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderedUnits")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderedBooks");
                 });
 
             modelBuilder.Entity("MicroRabbit.Books.Domain.Models.Publication", b =>

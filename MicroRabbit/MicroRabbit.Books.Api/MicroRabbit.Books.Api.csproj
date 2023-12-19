@@ -23,6 +23,7 @@
     <ProjectReference Include="..\MicroRabbit.Books.Application\MicroRabbit.Books.Application.csproj" />
     <ProjectReference Include="..\MicroRabbit.Books.Data\MicroRabbit.Books.Data.csproj" />
     <ProjectReference Include="..\MicroRabbit.Infrastructure.IoC\MicroRabbit.Infrastructure.IoC.csproj" />
+    <ProjectReference Include="..\MicroRabbit.Infrastructure.Synchronous\MicroRabbit.Infrastructure.Synchronous.csproj" />
   </ItemGroup>
 
 </Project>

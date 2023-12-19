@@ -194,9 +194,9 @@ namespace MicroRabbit.Infrastructure.Bus
                     await (Task)method.Invoke(eventHandler, new object[] { @event })!;
 
                     //Example
-                    /* Event name:"EventToCreateTransfer"
-                     * EventType:EventToCreateTransfer
-                     * EventHandlerType:EventToCreateTransferHandler
+                    /* Event name:"EventToUpdateBook"
+                     * EventType:EventToUpdateBook
+                     * EventHandlerType:EventToUpdateBookHandler
                      * */
                 }
             }

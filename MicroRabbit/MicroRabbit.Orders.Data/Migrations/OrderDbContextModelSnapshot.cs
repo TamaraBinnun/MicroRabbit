@@ -94,7 +94,7 @@ namespace MicroRabbit.Orders.Data.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int>("OrderedUnits")
                         .HasColumnType("int");
 
                     b.Property<decimal>("UnitPrice")

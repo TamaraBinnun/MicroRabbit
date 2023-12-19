@@ -26,5 +26,7 @@ namespace MicroRabbit.Books.Domain.Models
 
         [Required]
         public string CoverImage { get; set; } = null!;
+
+        public int Units { get; set; }
     }
 }

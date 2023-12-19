@@ -36,5 +36,23 @@ namespace MicroRabbit.Application.Services
 
             return _mapper.Map<TResponse>(entity);
         }
+
+        public async Task<IEnumerable<TResponse>?> GetManyByIdAsync(IEnumerable<int> ids)
+        {
+            var entities = await _repository.GetManyByIdAsync(ids);
+            if (entities == null)
+            {
+                return null;
+            }
+
+            return _mapper.Map<IEnumerable<TResponse>>(entities);
+        }
+
+        public async Task<bool> IsExistAsync(int id)
+        {
+            var exist = await _repository.IsExistAsync(id);
+
+            return exist;
+        }
     }
 }

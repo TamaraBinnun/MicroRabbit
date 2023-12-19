@@ -8,6 +8,8 @@ namespace MicroRabbit.Domain.Core.Interfaces
 
         Task<T?> GetByIdAsync(int id);
 
+        Task<IEnumerable<T>?> GetManyByIdAsync(IEnumerable<int> ids);
+
         Task<bool> IsExistAsync(int id);
 
         Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> filter = null,

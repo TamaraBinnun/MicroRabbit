@@ -1,5 +1,4 @@
-using MicroRabbit.Domain.Core.Dtos;
-using MicroRabbit.Orders.Application.Dtos.Orders;
+using MicroRabbit.Orders.Application.Dtos.OrderBooks;
 using MicroRabbit.Orders.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,61 +9,60 @@ namespace MicroRabbit.Orders.Api.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly ILogger<OrdersController> _logger;
-        private readonly IOrderService _orderService;
+        private readonly IOrderBooksService _orderBooksService;
 
         public OrdersController(ILogger<OrdersController> logger,
-                                IOrderService orderService)
+                                IOrderBooksService orderBooksService)
         {
             _logger = logger;
-            _orderService = orderService;
+            _orderBooksService = orderBooksService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderResponse>>> GetOrdersAsync()
+        public async Task<ActionResult<IEnumerable<OrderBookResponse>>> GetOrdersAsync()
         {
-            return Ok(await _orderService.GetAllAsync());
+            return Ok(await _orderBooksService.GetAllAsync());
         }
 
-        [HttpGet("{id}", Name = "GetOrderAsync")]
-        public async Task<ActionResult<OrderResponse>> GetOrderAsync(int id)
+        [HttpGet("{id}", Name = "GetByOrderIdAsync")]
+        public async Task<ActionResult<OrderBookResponse>> GetByOrderIdAsync(int orderId)
         {
-            if (id < 1)
+            if (orderId < 1)
             {
                 return BadRequest();
             }
 
-            var response = await _orderService.GetByIdAsync(id);
-            if (response == null)
+            var response = await _orderBooksService.GetByOrderIdAsync(orderId);
+            if (response?.Order == null)
             {
                 return NotFound();
             }
+
             return Ok(response);
         }
 
         [HttpPost]
-        public async Task<ActionResult<OrderResponse>> PostAsync([FromBody] AddOrderRequest addOrderRequest)
+        public async Task<ActionResult<OrderBookResponse>> PostAsync([FromBody] AddOrderBookRequest addOrderRequest)
         {
             if (addOrderRequest == null)
             {
                 return BadRequest();
             }
 
-            var orderResponse = await _orderService.AddAsync(addOrderRequest);
+            var orderBookResponse = await _orderBooksService.AddAsync(addOrderRequest);
 
-            await _orderService.UpdateBookUnitsInStockAsync(addOrderRequest.OrderItems);
-
-            return CreatedAtRoute(nameof(GetOrderAsync), new { Id = orderResponse.Id }, orderResponse);
+            return CreatedAtRoute(nameof(GetByOrderIdAsync), new { Id = orderBookResponse.Order?.Id }, orderBookResponse);
         }
 
         [HttpPut]
-        public async Task<IActionResult> PutAsync([FromBody] UpdateOrderRequest updateOrderRequest)
+        public async Task<IActionResult> PutAsync([FromBody] UpdateOrderBookRequest updateOrderRequest)
         {
             if (updateOrderRequest == null)
             {
                 return BadRequest();
             }
 
-            var response = await _orderService.UpdateAsync(updateOrderRequest);
+            var response = await _orderBooksService.UpdateAsync(updateOrderRequest);
 
             if (response <= 0)
             {
@@ -75,14 +73,14 @@ namespace MicroRabbit.Orders.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public async Task<IActionResult> DeleteAsync(int orderId)
         {
-            if (id < 1)
+            if (orderId < 1)
             {
                 return BadRequest();
             }
 
-            var response = await _orderService.DeleteAsync(id);
+            var response = await _orderBooksService.DeleteAsync(orderId);
 
             if (response == -1)
             {
@@ -90,20 +88,6 @@ namespace MicroRabbit.Orders.Api.Controllers
             }
 
             return Ok();
-        }
-
-        [HttpGet]
-        [Route("~/api/BookUnitsInStock/")]
-        public async Task<ActionResult<IEnumerable<BookUnits>>> GetBookUnitsInStockAsync([FromQuery] int[] bookIds)
-        {
-            if (bookIds == null)
-            {
-                return BadRequest();
-            }
-
-            var response = await _orderService.GetBookUnitsInStockAsync(bookIds.ToList());
-
-            return Ok(response);
         }
     }
 }

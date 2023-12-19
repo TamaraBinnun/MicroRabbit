@@ -12,7 +12,7 @@ namespace MicroRabbit.Books.Data.Context
         public DbSet<Book> Books { get; set; }
         public DbSet<BookCategory> BookCategories { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<BookInStock> BooksInStock { get; set; }
+        public DbSet<OrderedBook> OrderedBooks { get; set; }
         public DbSet<Publication> Publications { get; set; }
     }
 }
