@@ -3,5 +3,7 @@
     public class AddOrderRequest
     {
         public int UserId { get; set; }
+
+        public string DeliveryAddress { get; set; } = null!;
     }
 }

@@ -6,6 +6,6 @@ namespace MicroRabbit.Orders.Application.Interfaces
 {
     public interface IOrderItemsService : IService<OrderItemResponse, AddOrderItemRequest, UpdateOrderItemRequest>
     {
-        Task<IEnumerable<OrderItemResponse>> GetByOrderIdAsync(int orderId);
+        IEnumerable<OrderItemResponse> GetByOrderId(int orderId);
     }
 }

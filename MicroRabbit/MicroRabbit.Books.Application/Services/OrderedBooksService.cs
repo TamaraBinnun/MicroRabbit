@@ -25,9 +25,9 @@ namespace MicroRabbit.Books.Application.Services
 
         public async Task UseEventToUpdateOrderedBooksAsync(IEnumerable<CommonOrderedBook> commonOrderedBooks)
         {
-            var tasks = commonOrderedBooks.Select(async commonOrderedBook =>
+            foreach (var commonOrderedBook in commonOrderedBooks)
             {
-                var existEntity = await GetByBookIdOrderIdOrderItemIdAsync(commonOrderedBook.BookId, commonOrderedBook.OrderId, commonOrderedBook.OrderItemId);
+                var existEntity = await _repository.GetFirstOrDefaultAsync(filter: b => b.BookId == commonOrderedBook.BookId && b.OrderId == commonOrderedBook.OrderId && b.OrderItemId == commonOrderedBook.OrderItemId);
 
                 if (commonOrderedBook.IsDeleted)
                 {
@@ -38,7 +38,7 @@ namespace MicroRabbit.Books.Application.Services
                     else
                     {
                         //delete
-                        await DeleteAsync(existEntity.Id);
+                        var deletedResponse = await DeleteAsync(existEntity.Id);
                     }
                 }
                 else
@@ -47,33 +47,17 @@ namespace MicroRabbit.Books.Application.Services
                     {
                         //ordered book does not exists -  add it
                         var addRequest = _mapper.Map<AddOrderedBookRequest>(commonOrderedBook);
-                        await AddAsync(addRequest);
+                        var addedResponse = await AddAsync(addRequest);
                     }
                     else
                     {
                         //update existing data
                         var updateRequest = _mapper.Map<UpdateOrderedBookRequest>(commonOrderedBook);
                         updateRequest.Id = existEntity.Id;
-                        await UpdateAsync(updateRequest);
+                        var updatedResponse = await UpdateAsync(updateRequest);
                     }
                 }
-            }).ToList();
-
-            await Task.WhenAll(tasks);
-        }
-
-        private async Task<OrderedBook?> GetByBookIdOrderIdOrderItemIdAsync(int bookId, int orderId, int orderItemId)
-        {
-            var orderedBook = await _repository.GetManyAsync(
-                filter: b => b.BookId == bookId && b.OrderId == orderId && b.OrderItemId == orderItemId,
-                top: 1);
-
-            if (orderedBook == null)
-            {
-                return null;
             }
-
-            return orderedBook.ToList().FirstOrDefault();
         }
     }
 }

@@ -31,7 +31,7 @@ namespace MicroRabbit.Application.Services
             var entity = _mapper.Map<T>(addRequest);
 
             _repository.Add(entity);
-            await _repository.SaveChangesAsync();
+            var saveResponse = await _repository.SaveChangesAsync();
 
             var response = _mapper.Map<TResponse>(entity);//entity with the new Id
 
@@ -54,7 +54,16 @@ namespace MicroRabbit.Application.Services
         public async Task<int> UpdateAsync(UpdateTRequest updateRequest)
         {
             var entity = _mapper.Map<T>(updateRequest);
-            _repository.Update(entity);
+            try
+            {
+                _repository.Update(entity);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception in repository update: {ex.Message}");
+                throw;
+            }
+
             return await _repository.SaveChangesAsync();
         }
 
@@ -95,7 +104,7 @@ namespace MicroRabbit.Application.Services
         public async Task<int> DeleteManyByFilterAsync(Expression<Func<TResponse, bool>> filter)
         {
             var filterT = _mapper.Map<Expression<Func<T, bool>>>(filter);
-            var entities = await _repository.GetManyAsync(
+            var entities = _repository.GetMany(
                 filter: filterT);
 
             if (entities == null)

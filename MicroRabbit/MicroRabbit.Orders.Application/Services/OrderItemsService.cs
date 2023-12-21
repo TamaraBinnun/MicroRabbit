@@ -23,9 +23,9 @@ namespace MicroRabbit.Orders.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<OrderItemResponse>> GetByOrderIdAsync(int orderId)
+        public IEnumerable<OrderItemResponse> GetByOrderId(int orderId)
         {
-            var orderItems = await _repository.GetManyAsync(
+            var orderItems = _repository.GetMany(
                 filter: b => b.OrderId == orderId,
                 orderBy: b => b.OrderBy(b => b.BookId));
 

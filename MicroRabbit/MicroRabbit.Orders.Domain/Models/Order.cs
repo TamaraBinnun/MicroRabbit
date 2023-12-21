@@ -1,5 +1,4 @@
 ﻿using MicroRabbit.Domain.Core.Models;
-using System.ComponentModel.DataAnnotations;
 
 namespace MicroRabbit.Orders.Domain.Models
 {
@@ -7,6 +6,10 @@ namespace MicroRabbit.Orders.Domain.Models
     {
         public int UserId { get; set; }
 
-        public int OrderStatusId { get; set; }
+        public OrderStatus OrderStatus { get; set; }
+
+        public string DeliveryAddress { get; set; } = null!;
+
+        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 }

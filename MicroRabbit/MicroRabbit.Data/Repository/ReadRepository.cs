@@ -36,14 +36,24 @@ namespace MicroRabbit.Data.Repository
             return response;
         }
 
-        public async Task<bool> IsExistAsync(int id)
+        public async Task<bool> IsExistByIdAsync(int id)
         {
             return await _dbSet.AnyAsync(e => e.Id == id);
         }
 
-        public async Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> filter = null,
-                                            Func<IQueryable<T>,
-                                            IOrderedQueryable<T>> orderBy = null,
+        public async Task<bool> IsExistAsync(Expression<Func<T, bool>> filter)
+        {
+            return await _dbSet.AnyAsync(filter);
+        }
+
+        public async Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter)
+        {
+            var query = await _dbSet.FirstOrDefaultAsync(filter);
+            return query;
+        }
+
+        public IEnumerable<T>? GetMany(Expression<Func<T, bool>> filter = null,
+                                            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
                                             int? top = null,
                                             int? skip = null,
                                             params string[] includeProperties)
@@ -75,7 +85,7 @@ namespace MicroRabbit.Data.Repository
                 query = query.Take(top.Value);
             }
 
-            return await query.ToListAsync();
+            return query.AsEnumerable<T>();
         }
     }
 }

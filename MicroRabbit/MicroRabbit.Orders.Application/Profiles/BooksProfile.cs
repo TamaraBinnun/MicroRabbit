@@ -26,10 +26,6 @@ namespace MicroRabbit.Orders.Application.Profiles
             CreateMap<CommonBookData, AddBookRequest>()
                .ForMember(dest => dest.ExternalId, opt => opt.MapFrom(src => src.BookId));
 
-            //BooksController BooksService.UseEventToUpdateBookAsync
-            CreateMap<CommonBookData, UpdateBookRequest>()
-               .ForMember(dest => dest.ExternalId, opt => opt.MapFrom(src => src.BookId));
-
             //.ReverseMap();
         }
     }

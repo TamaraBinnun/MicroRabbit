@@ -16,5 +16,7 @@ namespace MicroRabbit.Orders.Domain.Models
         public decimal UnitPrice { get; set; }
 
         public Book Book { get; set; } = null!;
+
+        public Order Order { get; set; } = null!;
     }
 }

@@ -22,7 +22,8 @@ namespace MicroRabbit.Orders.Application.Profiles
                 .ForMember(dest => dest.LastUpdatedDate, opt => opt.MapFrom(src => DateTime.Now));
 
             //OrdersController OrderBooksService.AddAsync
-            CreateMap<OrderItemResponse, CommonOrderedBook>();
+            CreateMap<OrderItemResponse, CommonOrderedBook>()
+                .ForMember(dest => dest.OrderItemId, opt => opt.MapFrom(src => src.Id));
 
             //OrdersController OrderBooksService.HandleUpdateOrderItems
             CreateMap<UpdateOrderItemRequest, CommonOrderedBook>();

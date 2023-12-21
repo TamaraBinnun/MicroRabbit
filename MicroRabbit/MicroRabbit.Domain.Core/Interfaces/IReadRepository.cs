@@ -10,9 +10,13 @@ namespace MicroRabbit.Domain.Core.Interfaces
 
         Task<IEnumerable<T>?> GetManyByIdAsync(IEnumerable<int> ids);
 
-        Task<bool> IsExistAsync(int id);
+        Task<bool> IsExistByIdAsync(int id);
 
-        Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> filter = null,
+        Task<bool> IsExistAsync(Expression<Func<T, bool>> filter);
+
+        Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter);
+
+        IEnumerable<T>? GetMany(Expression<Func<T, bool>> filter = null,
                                           Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
                                           int? top = null,
                                           int? skip = null,

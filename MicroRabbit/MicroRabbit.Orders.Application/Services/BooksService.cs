@@ -26,7 +26,7 @@ namespace MicroRabbit.Orders.Application.Services
 
         public async Task UseEventToUpdateBookAsync(CommonBookData commonBookData)
         {
-            var bookEntity = await GetByExternalIdAsync(commonBookData.BookId);
+            var bookEntity = await _repository.GetFirstOrDefaultAsync(filter: b => b.ExternalId == commonBookData.BookId);
             if (commonBookData.IsDeleted)
             {
                 if (bookEntity == null)
@@ -49,21 +49,16 @@ namespace MicroRabbit.Orders.Application.Services
                 }
                 else
                 {
-                    var updateBookRequest = _mapper.Map<UpdateBookRequest>(commonBookData);
-                    updateBookRequest.Id = bookEntity.Id;
-                    await UpdateAsync(updateBookRequest);
-                    Console.WriteLine($"Book id: {bookEntity.Id} was updated");
+                    bookEntity.Title = commonBookData.Title;
+                    bookEntity.LastUpdatedDate = DateTime.Now;
+                    var updateResponse = await _repository.SaveChangesAsync();
+
+                    if (updateResponse > 0)
+                    {
+                        Console.WriteLine($"Book id: {bookEntity.Id} was updated");
+                    }
                 }
             }
-        }
-
-        private async Task<Book?> GetByExternalIdAsync(int externalId)
-        {
-            var book = await _repository.GetManyAsync(
-                filter: b => b.ExternalId == externalId,
-                top: 1);
-
-            return book?.ToList().FirstOrDefault();
         }
     }
 }

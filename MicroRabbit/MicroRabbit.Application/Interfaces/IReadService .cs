@@ -9,6 +9,6 @@
 
         Task<IEnumerable<TResponse>?> GetManyByIdAsync(IEnumerable<int> ids);
 
-        Task<bool> IsExistAsync(int id);
+        Task<bool> IsExistByIdAsync(int id);
     }
 }

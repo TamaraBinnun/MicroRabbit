@@ -13,12 +13,13 @@ namespace MicroRabbit.Orders.Application.Profiles
 
             //OrdersController Service.AddAsync
             CreateMap<AddOrderRequest, Order>()
-                .ForMember(dest => dest.OrderStatusId, opt => opt.MapFrom(src => 1))
+                .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => OrderStatus.Created))
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.Now))
                 .ForMember(dest => dest.LastUpdatedDate, opt => opt.MapFrom(src => DateTime.Now));
 
             //OrdersController Service.UpdateAsync
             CreateMap<UpdateOrderRequest, Order>()
+                .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => OrderStatus.Updated))
                 .ForMember(dest => dest.LastUpdatedDate, opt => opt.MapFrom(src => DateTime.Now));
 
             //.ReverseMap();

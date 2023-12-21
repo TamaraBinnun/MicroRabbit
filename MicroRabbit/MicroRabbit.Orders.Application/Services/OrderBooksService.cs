@@ -40,13 +40,11 @@ namespace MicroRabbit.Orders.Application.Services
         {
             var orders = await _orderService.GetAllAsync();
 
-            var tasks = orders.Select(async order => new OrderBookResponse()
+            var response = orders.Select(order => new OrderBookResponse()
             {
                 Order = order,
-                OrderItems = await _orderItemsService.GetByOrderIdAsync(order.Id),
+                OrderItems = _orderItemsService.GetByOrderId(order.Id),
             });
-
-            var response = await Task.WhenAll(tasks);
 
             return response;
         }
@@ -56,7 +54,7 @@ namespace MicroRabbit.Orders.Application.Services
             var response = new OrderBookResponse()
             {
                 Order = await _orderService.GetByIdAsync(orderId),
-                OrderItems = await _orderItemsService.GetByOrderIdAsync(orderId),
+                OrderItems = _orderItemsService.GetByOrderId(orderId),
             };
 
             return response;
@@ -64,9 +62,13 @@ namespace MicroRabbit.Orders.Application.Services
 
         public async Task<OrderBookResponse> AddAsync(AddOrderBookRequest addRequest)
         {
+            var orderResponse = await _orderService.AddAsync(addRequest.Order);
+
+            addRequest.OrderItems.ToList().ForEach(x => x.OrderId = orderResponse.Id);
+
             var response = new OrderBookResponse()
             {
-                Order = await _orderService.AddAsync(addRequest.Order),
+                Order = orderResponse,
                 OrderItems = await _orderItemsService.AddManyAsync(addRequest.OrderItems)
             };
 
@@ -108,7 +110,7 @@ namespace MicroRabbit.Orders.Application.Services
             #region CreateEvent
 
             //get and save orderItems and save before deleting them in order to create event
-            var orderItems = await _orderItemsService.GetByOrderIdAsync(orderId);
+            var orderItems = _orderItemsService.GetByOrderId(orderId);
 
             #endregion CreateEvent
 

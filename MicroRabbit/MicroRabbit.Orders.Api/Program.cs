@@ -33,7 +33,7 @@ namespace MicroRabbit.Orders.Api
                 var password = builder.Configuration.GetConnectionString("Password");
                 var dbConnection = string.Format(builder.Configuration.GetConnectionString("Template")!, server, database, user, password);
                 options.UseSqlServer(dbConnection);
-            });
+            }, ServiceLifetime.Transient);
 
             builder.Services.AddHttpClient<ISynchronousSender, HttpSender>((httpClient, sp) =>
             {
@@ -98,8 +98,6 @@ namespace MicroRabbit.Orders.Api
 
             services.AddTransient<IOrderItemsService, OrderItemsService>();
             services.AddTransient<IOrderItemsRepository, OrderItemRepository>();
-
-            services.AddTransient<OrderDbContext>();
 
             services.AddTransient<IRequestHandler<UpdateOrderedBooksCommand, bool>, UpdateOrderedBooksCommandHandler>();
 

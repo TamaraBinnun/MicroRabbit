@@ -6,7 +6,9 @@
 
         public int UserId { get; set; }
 
-        public int OrderStatusId { get; set; }
+        public int OrderStatus { get; set; }
+
+        public string DeliveryAddress { get; set; } = null!;
 
         public DateTime CreatedDate { get; set; }
     }

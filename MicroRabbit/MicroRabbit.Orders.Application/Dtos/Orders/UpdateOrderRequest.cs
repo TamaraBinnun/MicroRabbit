@@ -4,6 +4,6 @@
     {
         public int Id { get; set; }
 
-        public int OrderStatusId { get; set; }
+        public string DeliveryAddress { get; set; } = null!;
     }
 }

@@ -34,7 +34,7 @@ namespace MicroRabbit.Books.Api
                 var password = builder.Configuration.GetConnectionString("Password");
                 var dbConnection = string.Format(builder.Configuration.GetConnectionString("Template")!, server, database, user, password);
                 options.UseSqlServer(dbConnection);
-            });
+            }, ServiceLifetime.Transient);
 
             builder.Services.AddHttpClient<ISynchronousSender, HttpSender>((httpClient, sp) =>
             {
@@ -94,8 +94,6 @@ namespace MicroRabbit.Books.Api
 
             services.AddTransient<IOrderedBooksService, OrderedBooksService>();
             services.AddTransient<IOrderedBooksRepository, OrderedBooksRepository>();
-
-            services.AddTransient<BookDbContext>();
 
             services.AddTransient<IRequestHandler<UpdateBookCommand, bool>, UpdateBookCommandHandler>();
 
