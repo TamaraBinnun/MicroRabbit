@@ -1,12 +1,15 @@
-﻿namespace MicroRabbit.Books.Application.Dtos.Books
+﻿using MicroRabbit.Domain.Core.Models;
+
+namespace MicroRabbit.Books.Application.Dtos.Books
 {
-    public class BookResponse
+    public class BookResponse : BaseResponse
     {
-        public int Id { get; set; }
+        public string ISBN { get; set; } = null!;
 
         public string Title { get; set; } = null!;
 
         public int PublicationId { get; set; }
+
         public int AuthorId { get; set; }
 
         public decimal Price { get; set; }
@@ -16,7 +19,5 @@
         public string CoverImage { get; set; } = null!;
 
         public int Units { get; set; }
-
-        public DateTime CreatedDate { get; set; }
     }
 }

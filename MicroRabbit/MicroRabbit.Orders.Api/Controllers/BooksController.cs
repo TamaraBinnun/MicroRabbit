@@ -20,13 +20,13 @@ namespace MicroRabbit.Orders.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookResponse>>> GetBooksAsync()
+        public ActionResult<IEnumerable<BookResponse>> GetAll()
         {
-            return Ok(await _bookService.GetAllAsync());
+            return Ok(_bookService.GetAll());
         }
 
         [HttpGet("{id}", Name = "GetBookAsync")]
-        public async Task<ActionResult<BookResponse>> GetBookAsync(int id)
+        public async Task<ActionResult<BookResponse>> GetByIdAsync(int id)
         {
             if (id < 1)
             {
@@ -45,8 +45,8 @@ namespace MicroRabbit.Orders.Api.Controllers
          *after creating a new book, when rabbitmq communication is down, it uses directly this service
          *by sending -book ids that have been ordered- and -their titles-, for updating books table in order microservice*/
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateBookAsync([FromBody] CommonBookData bookData)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateBookAsync(int id, [FromBody] CommonBookData bookData)
         {
             if (bookData == null)
             {

@@ -12,11 +12,11 @@ namespace MicroRabbit.Orders.Application.Services
 {
     public class BooksService : Service<Book, BookResponse, AddBookRequest, UpdateBookRequest>, IBooksService
     {
-        private readonly IBooksRepository _repository;
+        private readonly IBooksRepository<UpdateBookRequest> _repository;
         private readonly IEventBus _eventBus;
         private readonly IMapper _mapper;
 
-        public BooksService(IBooksRepository repository, IEventBus eventBus, IMapper mapper)
+        public BooksService(IBooksRepository<UpdateBookRequest> repository, IEventBus eventBus, IMapper mapper)
              : base(repository, eventBus, mapper)
         {
             _repository = repository;

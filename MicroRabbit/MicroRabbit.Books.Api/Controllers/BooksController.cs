@@ -24,14 +24,14 @@ namespace MicroRabbit.Books.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookResponse>>> GetBooksAsync()
+        public ActionResult<IEnumerable<BookResponse>> GetAll()
         {
-            var response = await _bookService.GetAllAsync();
+            var response = _bookService.GetAll();
             return Ok(response);
         }
 
-        [HttpGet("{id}", Name = "GetBookAsync")]
-        public async Task<ActionResult<BookResponse>> GetBookAsync(int id)
+        [HttpGet("{id}", Name = "GetByIdAsync")]
+        public async Task<ActionResult<BookResponse>> GetByIdAsync(int id)
         {
             if (id < 1)
             {
@@ -63,26 +63,26 @@ namespace MicroRabbit.Books.Api.Controllers
                 await _bookService.CreateEventToUpdateBookAsync(bookData);
             }
 
-            return CreatedAtRoute(nameof(GetBookAsync), new { Id = bookResponse?.Id }, bookResponse);
+            return CreatedAtRoute(nameof(GetByIdAsync), new { Id = bookResponse?.Id }, bookResponse);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> PutAsync([FromBody] UpdateBookRequest updateBookRequest)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutAsync(int id, [FromBody] UpdateBookRequest updateBookRequest)
         {
             if (updateBookRequest == null)
             {
                 return BadRequest();
             }
 
-            var response = await _bookService.UpdateAsync(updateBookRequest);
+            var response = await _bookService.UpdateAsync(id, updateBookRequest);
 
-            if (response <= 0)
+            if (response == null)
             {
                 return NotFound();
             }
 
-            //send event EventToUpdateBook to rabbitmq for updating book data in order microservice
-            var bookData = _mapper.Map<CommonBookData>(updateBookRequest);
+            //send event EventToUpdateBook to rabbitmq for inserting or updating book data in order microservice
+            var bookData = _mapper.Map<CommonBookData>(response);
             await _bookService.CreateEventToUpdateBookAsync(bookData);
 
             return Ok();
@@ -96,19 +96,16 @@ namespace MicroRabbit.Books.Api.Controllers
                 return BadRequest();
             }
 
-            var response = await _bookService.DeleteAsync(id);
+            var bookResponse = await _bookService.DeleteAsync(id);
 
-            if (response == -1)
+            if (bookResponse == null)
             {
                 return NotFound();
             }
 
             //send event EventToUpdateBook to rabbitmq for updating book data in order microservice
-            var bookData = new CommonBookData
-            {
-                BookId = id,
-                IsDeleted = true
-            };
+            var bookData = _mapper.Map<CommonBookData>((bookResponse, true));//IsDeleted = true
+
             await _bookService.CreateEventToUpdateBookAsync(bookData);
 
             return Ok();

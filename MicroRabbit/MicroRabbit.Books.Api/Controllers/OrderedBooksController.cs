@@ -22,16 +22,15 @@ namespace MicroRabbit.Books.Api.Controllers
          *after creating a new order, when rabbitmq communication is down, it uses directly this service
          *by sending -book ids that have been ordered- and -how many units ordered- */
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateOrderedBooksAsync([FromBody] IEnumerable<CommonOrderedBook> commonOrderedBooks)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateOrderedBooksAsync(int id, [FromBody] CommonOrder commonOrder)
         {
-            if (commonOrderedBooks == null)
+            var response = await _orderedBooksService.UseEventToUpdateOrderedBooksAsync(commonOrder);
+
+            if (response == null)
             {
                 return BadRequest();
             }
-
-            await _orderedBooksService.UseEventToUpdateOrderedBooksAsync(commonOrderedBooks);
-
             return Ok();
         }
     }

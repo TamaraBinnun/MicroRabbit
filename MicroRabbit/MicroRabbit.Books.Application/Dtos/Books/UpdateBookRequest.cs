@@ -1,13 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using MicroRabbit.Domain.Core.Models;
 
 namespace MicroRabbit.Books.Application.Dtos.Books
 {
-    public class UpdateBookRequest
+    public class UpdateBookRequest : UpdateBaseRequest
     {
-        [Required]
-        public int Id { get; set; }
-
         [Required]
         public string Title { get; set; } = null!;
 

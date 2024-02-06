@@ -2,12 +2,13 @@
 using MicroRabbit.Books.Domain.Interfaces;
 using MicroRabbit.Books.Domain.Models;
 using MicroRabbit.Data.Repository;
-using MicroRabbit.Domain.Core.Dtos;
-using Microsoft.EntityFrameworkCore;
+using MicroRabbit.Domain.Core.Models;
 
 namespace MicroRabbit.Books.Data.Repository
 {
-    public class BooksRepository : Repository<Book>, IBooksRepository
+    public class BooksRepository<UpdateTRequest> : Repository<Book, UpdateTRequest>,
+                                                   IBooksRepository<UpdateTRequest>
+        where UpdateTRequest : UpdateBaseRequest
     {
         private readonly BookDbContext _context;
 

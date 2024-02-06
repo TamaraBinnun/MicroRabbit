@@ -17,6 +17,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 using System.Reflection;
+using MicroRabbit.Books.Application.Dtos.Books;
+using MicroRabbit.Books.Application.Dtos.OrderedBooks;
 
 namespace MicroRabbit.Books.Api
 {
@@ -90,10 +92,10 @@ namespace MicroRabbit.Books.Api
             DependencyContainer.RegisterServices(services);
 
             services.AddTransient<IBooksService, BooksService>();
-            services.AddTransient<IBooksRepository, BooksRepository>();
+            services.AddTransient<IBooksRepository<UpdateBookRequest>, BooksRepository<UpdateBookRequest>>();
 
             services.AddTransient<IOrderedBooksService, OrderedBooksService>();
-            services.AddTransient<IOrderedBooksRepository, OrderedBooksRepository>();
+            services.AddTransient<IOrderedBooksRepository<UpdateOrderedBookRequest>, OrderedBooksRepository<UpdateOrderedBookRequest>>();
 
             services.AddTransient<IRequestHandler<UpdateBookCommand, bool>, UpdateBookCommandHandler>();
 

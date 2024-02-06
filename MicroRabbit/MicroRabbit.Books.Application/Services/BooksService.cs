@@ -12,15 +12,16 @@ using Microsoft.Extensions.Configuration;
 
 namespace MicroRabbit.Books.Application.Services
 {
-    public class BooksService : Service<Book, BookResponse, AddBookRequest, UpdateBookRequest>, IBooksService
+    public class BooksService : Service<Book, BookResponse, AddBookRequest, UpdateBookRequest>,
+                                IBooksService
     {
-        private readonly IBooksRepository _repository;
+        private readonly IBooksRepository<UpdateBookRequest> _repository;
         private readonly IEventBus _eventBus;
         private readonly IMapper _mapper;
         private readonly ISynchronousSender _synchronousSender;
         private readonly IConfiguration _config;
 
-        public BooksService(IBooksRepository repository,
+        public BooksService(IBooksRepository<UpdateBookRequest> repository,
                            IEventBus eventBus,
                            IMapper mapper,
                             ISynchronousSender synchronousSender,

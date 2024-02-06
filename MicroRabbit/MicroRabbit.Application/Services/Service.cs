@@ -2,28 +2,59 @@
 using MicroRabbit.Application.Interfaces;
 using MicroRabbit.Domain.Core.Bus;
 using MicroRabbit.Domain.Core.Interfaces;
+using MicroRabbit.Domain.Core.Models;
 using System.Linq.Expressions;
 
 namespace MicroRabbit.Application.Services
 {
-    public class Service<T, TResponse, AddTRequest, UpdateTRequest> :
-                                ReadService<T, TResponse>,
-                                IService<TResponse, AddTRequest, UpdateTRequest>
-        where T : class
-        where TResponse : class
+    public class Service<T, TResponse, AddTRequest, UpdateTRequest> : IService<TResponse, AddTRequest, UpdateTRequest>
+        where T : BaseModel
+        where TResponse : BaseResponse
         where AddTRequest : class
-        where UpdateTRequest : class
+        where UpdateTRequest : UpdateBaseRequest
     {
-        private readonly IRepository<T> _repository;
+        private readonly IRepository<T, UpdateTRequest> _repository;
         private readonly IEventBus _eventBus;
         private readonly IMapper _mapper;
 
-        public Service(IRepository<T> repository, IEventBus eventBus, IMapper mapper) :
-            base(repository, eventBus, mapper)
+        public Service(IRepository<T, UpdateTRequest> repository, IEventBus eventBus, IMapper mapper)
         {
             _repository = repository;
             _eventBus = eventBus;
             _mapper = mapper;
+        }
+
+        public IEnumerable<TResponse>? GetAll(Expression<Func<TResponse, bool>> filter = null,
+                                       Expression<Func<IQueryable<TResponse>, IOrderedQueryable<TResponse>>> orderBy = null,
+                                       int? top = null,
+                                       int? skip = null,
+                                       params string[] includeProperties)
+        {
+            var filterT = _mapper.Map<Expression<Func<T, bool>>>(filter);
+            var orderByT = _mapper.Map<Expression<Func<IQueryable<T>, IOrderedQueryable<T>>>>(orderBy);
+            var entities = _repository.GetAll(filterT, orderByT, top, skip, includeProperties);
+            return _mapper.Map<IEnumerable<TResponse>?>(entities);
+        }
+
+        public async Task<TResponse?> GetByIdAsync(int id, params string[] includeProperties)
+        {
+            var entity = await _repository.GetByIdAsync(id, includeProperties);
+
+            return _mapper.Map<TResponse?>(entity);
+        }
+
+        public async Task<IEnumerable<TResponse>?> GetByIdsAsync(IEnumerable<int>? ids)
+        {
+            if (ids == null) { return null; }
+
+            var entities = await _repository.GetByIdsAsync(ids);
+            return _mapper.Map<IEnumerable<TResponse>?>(entities);
+        }
+
+        public async Task<bool> IsExistByIdAsync(int id)
+        {
+            var response = await _repository.IsExistByIdAsync(id);
+            return response;
         }
 
         public async Task<TResponse> AddAsync(AddTRequest addRequest)
@@ -38,83 +69,89 @@ namespace MicroRabbit.Application.Services
             return response;
         }
 
-        public async Task<IEnumerable<TResponse>> AddManyAsync(IEnumerable<AddTRequest> addRequest)
+        public async Task<IEnumerable<TResponse>?> AddRangeAsync(IEnumerable<AddTRequest>? addRequest)
         {
+            if (addRequest == null) { return null; }
+
             var entities = _mapper.Map<IEnumerable<T>>(addRequest).ToList();
 
-            entities.ForEach(_repository.Add);
+            _repository.AddRange(entities);
 
-            await _repository.SaveChangesAsync();
+            var saveResponse = await _repository.SaveChangesAsync();
 
-            var response = _mapper.Map<IEnumerable<TResponse>>(entities);//entity with the new Id
+            var response = _mapper.Map<IEnumerable<TResponse>>(entities);//entitues with the new Id
 
             return response;
         }
 
-        public async Task<int> UpdateAsync(UpdateTRequest updateRequest)
+        public async Task<TResponse?> UpdateAsync(int id, UpdateTRequest updateRequest, params string[] includeProperties)
         {
-            var entity = _mapper.Map<T>(updateRequest);
-            try
+            var currentEntity = await _repository.GetByIdAsync(id, includeProperties);
+            if (currentEntity == null)
             {
-                _repository.Update(entity);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception in repository update: {ex.Message}");
-                throw;
+                return null;
             }
 
-            return await _repository.SaveChangesAsync();
+            _repository.Update(currentEntity, updateRequest);
+
+            var saveResponse = await _repository.SaveChangesAsync();
+
+            var response = _mapper.Map<TResponse>(currentEntity);//entity with the updated data
+
+            return response;
         }
 
-        public async Task<int> UpdateManyAsync(IEnumerable<UpdateTRequest> updateRequest)
-        {
-            var entities = _mapper.Map<IEnumerable<T>>(updateRequest).ToList();
-
-            entities.ForEach(_repository.Update);
-
-            return await _repository.SaveChangesAsync();
-        }
-
-        public async Task<int> DeleteAsync(int id)
+        public async Task<TResponse?> DeleteAsync(int id)
         {
             var entity = await _repository.GetByIdAsync(id);
             if (entity == null)
             {
-                return -1;
+                return null;
             }
+            //לנסות לשלוח רק מספרי ID ללא שאר מידע בשביל מחיקה
 
             _repository.Delete(entity);
-            return await _repository.SaveChangesAsync();
+
+            var saveResponse = await _repository.SaveChangesAsync();
+
+            var response = _mapper.Map<TResponse>(entity);
+            return response;
         }
 
-        public async Task<int> DeleteManyAsync(IEnumerable<int> ids)
+        public async Task<IEnumerable<TResponse>?> DeleteRange(IEnumerable<int>? ids)
         {
-            var entities = await _repository.GetManyByIdAsync(ids);
+            if (ids == null) { return null; }
+
+            var entities = await _repository.GetByIdsAsync(ids);
             if (entities == null)
             {
-                return -1;
+                return null;
             }
+            //לנסות לשלוח רק מספרי ID ללא שאר מידע בשביל מחיקה
+            _repository.DeleteRange(entities);
 
-            entities.ToList().ForEach(_repository.Delete);
+            var saveResponse = await _repository.SaveChangesAsync();
 
-            return await _repository.SaveChangesAsync();
+            var response = _mapper.Map<IEnumerable<TResponse>>(entities);
+            return response;
         }
 
-        public async Task<int> DeleteManyByFilterAsync(Expression<Func<TResponse, bool>> filter)
+        public async Task<IEnumerable<TResponse>?> DeleteManyByFilterAsync(Expression<Func<TResponse, bool>> filter)
         {
             var filterT = _mapper.Map<Expression<Func<T, bool>>>(filter);
-            var entities = _repository.GetMany(
-                filter: filterT);
+            var entities = _repository.GetAll(filter: filterT);
 
             if (entities == null)
             {
-                return -1;
+                return null;
             }
 
-            entities.ToList().ForEach(_repository.Delete);
+            _repository.DeleteRange(entities);
 
-            return await _repository.SaveChangesAsync();
+            var saveResponse = await _repository.SaveChangesAsync();
+
+            var response = _mapper.Map<IEnumerable<TResponse>>(entities);
+            return response;
         }
     }
 }

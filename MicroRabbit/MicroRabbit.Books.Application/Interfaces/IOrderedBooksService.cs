@@ -6,6 +6,6 @@ namespace MicroRabbit.Books.Application.Interfaces
 {
     public interface IOrderedBooksService : IService<OrderedBookResponse, AddOrderedBookRequest, UpdateOrderedBookRequest>
     {
-        Task UseEventToUpdateOrderedBooksAsync(IEnumerable<CommonOrderedBook> commonOrderedBooks);
+        Task<int?> UseEventToUpdateOrderedBooksAsync(CommonOrder commonOrder);
     }
 }

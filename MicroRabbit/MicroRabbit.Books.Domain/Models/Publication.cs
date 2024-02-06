@@ -12,5 +12,7 @@ namespace MicroRabbit.Books.Domain.Models
         [Required]
         [MaxLength(100)]
         public string Description { get; set; } = null!;
+
+        public ICollection<Book>? Books { get; set; }//one to many relationship
     }
 }

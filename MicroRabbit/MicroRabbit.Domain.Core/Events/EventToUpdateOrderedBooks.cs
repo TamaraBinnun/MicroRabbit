@@ -4,11 +4,11 @@ namespace MicroRabbit.Domain.Core.Events
 {
     public class EventToUpdateOrderedBooks : Event
     {
-        public EventToUpdateOrderedBooks(IEnumerable<CommonOrderedBook> bookUnits)
+        public EventToUpdateOrderedBooks(CommonOrder commonOrder)
         {
-            BookUnits = bookUnits;
+            CommonOrder = commonOrder;
         }
 
-        public IEnumerable<CommonOrderedBook> BookUnits { get; set; }
+        public CommonOrder CommonOrder { get; set; }
     }
 }

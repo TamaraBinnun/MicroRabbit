@@ -1,11 +1,9 @@
-﻿namespace MicroRabbit.Orders.Application.Dtos.Books
+﻿using MicroRabbit.Domain.Core.Models;
+
+namespace MicroRabbit.Orders.Application.Dtos.Books
 {
-    public class UpdateBookRequest
+    public class UpdateBookRequest : UpdateBaseRequest
     {
-        public int Id { get; set; }
-
         public string Title { get; set; } = null!;
-
-        public int ExternalId { get; set; }
     }
 }

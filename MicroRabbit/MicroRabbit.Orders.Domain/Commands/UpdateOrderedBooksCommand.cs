@@ -5,11 +5,11 @@ namespace MicroRabbit.Orders.Domain.Commands
 {
     public class UpdateOrderedBooksCommand : Command
     {
-        public UpdateOrderedBooksCommand(IEnumerable<CommonOrderedBook> bookUnits)
+        public UpdateOrderedBooksCommand(CommonOrder commonOrder)
         {
-            BookUnits = bookUnits;
+            CommonOrder = commonOrder;
         }
 
-        public IEnumerable<CommonOrderedBook> BookUnits { get; set; }
+        public CommonOrder CommonOrder { get; set; }
     }
 }

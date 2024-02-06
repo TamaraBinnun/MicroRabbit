@@ -36,6 +36,11 @@ namespace MicroRabbit.Orders.Data.Migrations
                     b.Property<int>("ExternalId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ISBN")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<DateTime>("LastUpdatedDate")
                         .HasColumnType("datetime2");
 
@@ -46,7 +51,10 @@ namespace MicroRabbit.Orders.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Books");
+                    b.HasIndex("ISBN")
+                        .IsUnique();
+
+                    b.ToTable("Books", (string)null);
                 });
 
             modelBuilder.Entity("MicroRabbit.Orders.Domain.Models.Order", b =>
@@ -70,12 +78,19 @@ namespace MicroRabbit.Orders.Data.Migrations
                     b.Property<int>("OrderStatus")
                         .HasColumnType("int");
 
+                    b.Property<int?>("PaymentId")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.HasIndex("PaymentId")
+                        .IsUnique()
+                        .HasFilter("[PaymentId] IS NOT NULL");
+
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("MicroRabbit.Orders.Domain.Models.OrderItem", b =>
@@ -108,9 +123,47 @@ namespace MicroRabbit.Orders.Data.Migrations
 
                     b.HasIndex("BookId");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("OrderId", "BookId")
+                        .IsUnique();
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", (string)null);
+                });
+
+            modelBuilder.Entity("MicroRabbit.Orders.Domain.Models.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(5, 2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Payments", (string)null);
+                });
+
+            modelBuilder.Entity("MicroRabbit.Orders.Domain.Models.Order", b =>
+                {
+                    b.HasOne("MicroRabbit.Orders.Domain.Models.Payment", "Payment")
+                        .WithOne("Order")
+                        .HasForeignKey("MicroRabbit.Orders.Domain.Models.Order", "PaymentId");
+
+                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("MicroRabbit.Orders.Domain.Models.OrderItem", b =>
@@ -140,6 +193,12 @@ namespace MicroRabbit.Orders.Data.Migrations
             modelBuilder.Entity("MicroRabbit.Orders.Domain.Models.Order", b =>
                 {
                     b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("MicroRabbit.Orders.Domain.Models.Payment", b =>
+                {
+                    b.Navigation("Order")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

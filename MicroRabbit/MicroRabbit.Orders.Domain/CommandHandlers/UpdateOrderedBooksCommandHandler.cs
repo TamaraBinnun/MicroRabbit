@@ -16,7 +16,7 @@ namespace MicroRabbit.Orders.Domain.CommandHandlers
 
         public Task<bool> Handle(UpdateOrderedBooksCommand request, CancellationToken cancellationToken)
         {//publish event to RabbitMQ
-            var response = _eventBus.Publish(new EventToUpdateOrderedBooks(request.BookUnits));
+            var response = _eventBus.Publish(new EventToUpdateOrderedBooks(request.CommonOrder));
             return Task.FromResult(response);
         }
     }

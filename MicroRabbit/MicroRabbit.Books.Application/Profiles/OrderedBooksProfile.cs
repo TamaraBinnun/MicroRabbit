@@ -1,30 +1,19 @@
-﻿using AutoMapper;
+﻿using MicroRabbit.Application.Profiles;
 using MicroRabbit.Books.Application.Dtos.OrderedBooks;
 using MicroRabbit.Books.Domain.Models;
 using MicroRabbit.Domain.Core.Dtos;
 
 namespace MicroRabbit.Books.Application.Profiles
 {
-    public class OrderedBooksProfile : Profile
+    public class OrderedBooksProfile : BaseProfile<OrderedBook, OrderedBookResponse, AddOrderedBookRequest, UpdateOrderedBookRequest>
     {
         public OrderedBooksProfile()
         {
-            //OrderedBooksController Service.GetAllAsync
-            CreateMap<OrderedBook, OrderedBookResponse>();
+            //OrderedBooksController => OrderedBooksService => GetAddedItems
+            CreateMap<CommonOrderedBook, AddOrderedBookRequest>()
+                 .ForMember(dest => dest.ExternalBookId, opt => opt.MapFrom(src => src.BookId));
 
-            //OrderedBooksController Service.AddAsync
-            CreateMap<AddOrderedBookRequest, OrderedBook>()
-                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.Now))
-                .ForMember(dest => dest.LastUpdatedDate, opt => opt.MapFrom(src => DateTime.Now));
-
-            //OrderedBooksController Service.UpdateAsync
-            CreateMap<UpdateOrderedBookRequest, OrderedBook>()
-                .ForMember(dest => dest.LastUpdatedDate, opt => opt.MapFrom(src => DateTime.Now));
-
-            //OrderedBooksController OrderedBooksService.UseEventToUpdateOrderedBooksAsync
-            CreateMap<CommonOrderedBook, AddOrderedBookRequest>();
-
-            //OrderedBooksController OrderedBooksService.UseEventToUpdateOrderedBooksAsync
+            //OrderedBooksController => OrderedBooksService => GetUpdatedItems
             CreateMap<CommonOrderedBook, UpdateOrderedBookRequest>();
 
             //.ReverseMap();

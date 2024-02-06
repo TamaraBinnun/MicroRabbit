@@ -1,33 +1,26 @@
-﻿using AutoMapper;
+﻿using MicroRabbit.Application.Profiles;
 using MicroRabbit.Domain.Core.Dtos;
+using MicroRabbit.Orders.Application.Dtos;
 using MicroRabbit.Orders.Application.Dtos.OrderItems;
 using MicroRabbit.Orders.Domain.Models;
 
 namespace MicroRabbit.Orders.Application.Profiles
 {
-    public class OrderItemsProfile : Profile
+    public class OrderItemsProfile : BaseProfile<OrderItem, OrderItemResponse, AddOrderItemRequest, UpdateOrderItemRequest>
     {
         public OrderItemsProfile()
         {
-            //OrdersController Service.GetAllAsync
-            CreateMap<OrderItem, OrderItemResponse>();
+            //OrdersController => OrdersService => GetItemsToUpdate
+            CreateMap<AddOrderItemRequest, UpdateOrderItemRequest>();
 
-            //OrdersController Service.AddAsync
-            CreateMap<AddOrderItemRequest, OrderItem>()
-                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.Now))
-                .ForMember(dest => dest.LastUpdatedDate, opt => opt.MapFrom(src => DateTime.Now));
+            //****OrdersController => GetOrderItemsCreateEvent**************
+            CreateMap<(CommonOrderedBook, BookResponse), CommonOrderedBook>()
+                 .IncludeMembers(s => s.Item1)
+                 .ForMember(dest => dest.ISBN, opt => opt.MapFrom(src => src.Item2.ISBN));
 
-            //OrdersController Service.UpdateAsync
-            CreateMap<UpdateOrderItemRequest, OrderItem>()
-                .ForMember(dest => dest.LastUpdatedDate, opt => opt.MapFrom(src => DateTime.Now));
-
-            //OrdersController OrderBooksService.AddAsync
-            CreateMap<OrderItemResponse, CommonOrderedBook>()
-                .ForMember(dest => dest.OrderItemId, opt => opt.MapFrom(src => src.Id));
-
-            //OrdersController OrderBooksService.HandleUpdateOrderItems
-            CreateMap<UpdateOrderItemRequest, CommonOrderedBook>();
-
+            CreateMap<CommonOrderedBook, CommonOrderedBook>();
+            CreateMap<BookResponse, CommonOrderedBook>();
+            //**************************************************
             //.ReverseMap();
         }
     }

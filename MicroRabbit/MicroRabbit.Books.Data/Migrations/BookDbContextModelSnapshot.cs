@@ -45,6 +45,11 @@ namespace MicroRabbit.Books.Data.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
+                    b.Property<string>("ISBN")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<DateTime>("LastUpdatedDate")
                         .HasColumnType("datetime2");
 
@@ -63,6 +68,11 @@ namespace MicroRabbit.Books.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ISBN")
+                        .IsUnique();
+
+                    b.HasIndex("PublicationId");
 
                     b.ToTable("Books");
                 });
@@ -88,6 +98,11 @@ namespace MicroRabbit.Books.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("BookId", "CategoryId")
+                        .IsUnique();
 
                     b.ToTable("BookCategories");
                 });
@@ -127,11 +142,19 @@ namespace MicroRabbit.Books.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BookId")
+                    b.Property<int?>("BookId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("ExternalBookId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ISBN")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<bool>("IsStockUpdated")
                         .HasColumnType("bit");
@@ -149,6 +172,13 @@ namespace MicroRabbit.Books.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrderId", "BookId")
+                        .IsUnique()
+                        .HasFilter("[BookId] IS NOT NULL");
+
+                    b.HasIndex("OrderId", "ExternalBookId")
+                        .IsUnique();
 
                     b.ToTable("OrderedBooks");
                 });
@@ -180,6 +210,51 @@ namespace MicroRabbit.Books.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Publications");
+                });
+
+            modelBuilder.Entity("MicroRabbit.Books.Domain.Models.Book", b =>
+                {
+                    b.HasOne("MicroRabbit.Books.Domain.Models.Publication", "Publication")
+                        .WithMany("Books")
+                        .HasForeignKey("PublicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Publication");
+                });
+
+            modelBuilder.Entity("MicroRabbit.Books.Domain.Models.BookCategory", b =>
+                {
+                    b.HasOne("MicroRabbit.Books.Domain.Models.Book", "Book")
+                        .WithMany("BookCategory")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MicroRabbit.Books.Domain.Models.Category", "Category")
+                        .WithMany("BookCategory")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("MicroRabbit.Books.Domain.Models.Book", b =>
+                {
+                    b.Navigation("BookCategory");
+                });
+
+            modelBuilder.Entity("MicroRabbit.Books.Domain.Models.Category", b =>
+                {
+                    b.Navigation("BookCategory");
+                });
+
+            modelBuilder.Entity("MicroRabbit.Books.Domain.Models.Publication", b =>
+                {
+                    b.Navigation("Books");
                 });
 #pragma warning restore 612, 618
         }

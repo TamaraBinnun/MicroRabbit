@@ -16,7 +16,7 @@ namespace MicroRabbit.Books.Application.EventHandlers
 
         public async Task Handle(EventToUpdateOrderedBooks @event)
         {
-            await _orderedBooksService.UseEventToUpdateOrderedBooksAsync(@event.BookUnits);
+            await _orderedBooksService.UseEventToUpdateOrderedBooksAsync(@event.CommonOrder);
         }
     }
 }

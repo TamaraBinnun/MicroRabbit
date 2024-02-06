@@ -1,5 +1,6 @@
 ﻿using MicroRabbit.Application.Interfaces;
 using MicroRabbit.Books.Application.Dtos.Books;
+using MicroRabbit.Books.Domain.Models;
 using MicroRabbit.Domain.Core.Dtos;
 
 namespace MicroRabbit.Books.Application.Interfaces

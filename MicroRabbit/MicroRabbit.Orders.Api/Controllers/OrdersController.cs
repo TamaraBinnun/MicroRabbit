@@ -1,5 +1,10 @@
-using MicroRabbit.Orders.Application.Dtos.OrderBooks;
+using AutoMapper;
+using MicroRabbit.Domain.Core.Dtos;
+using MicroRabbit.Orders.Application.Dtos;
+using MicroRabbit.Orders.Application.Dtos.OrderItems;
+using MicroRabbit.Orders.Application.Dtos.Orders;
 using MicroRabbit.Orders.Application.Interfaces;
+using MicroRabbit.Orders.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MicroRabbit.Orders.Api.Controllers
@@ -9,31 +14,40 @@ namespace MicroRabbit.Orders.Api.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly ILogger<OrdersController> _logger;
-        private readonly IOrderBooksService _orderBooksService;
+        private readonly IOrdersService _ordersService;
+        private readonly IBooksService _bookService;
+        private readonly IMapper _mapper;
 
         public OrdersController(ILogger<OrdersController> logger,
-                                IOrderBooksService orderBooksService)
+                                IOrdersService ordersService,
+                                IBooksService bookService,
+                                IMapper mapper)
         {
             _logger = logger;
-            _orderBooksService = orderBooksService;
+            _ordersService = ordersService;
+            _bookService = bookService;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderBookResponse>>> GetOrdersAsync()
+        public ActionResult<IEnumerable<OrderResponse>?> GetAll()
         {
-            return Ok(await _orderBooksService.GetAllAsync());
+            return Ok(_ordersService.GetAll
+             (filter: x => x.OrderStatus == (int)OrderStatus.Created || x.OrderStatus == (int)OrderStatus.Updated,
+              orderBy: x => x.OrderByDescending(x => x.CreatedDate),
+            includeProperties: new string[] { "OrderItems" }));
         }
 
-        [HttpGet("{id}", Name = "GetByOrderIdAsync")]
-        public async Task<ActionResult<OrderBookResponse>> GetByOrderIdAsync(int orderId)
+        [HttpGet("{id}", Name = "GetByIdAsync")]
+        public async Task<ActionResult<OrderResponse>> GetByIdAsync(int id)
         {
-            if (orderId < 1)
+            if (id < 1)
             {
                 return BadRequest();
             }
 
-            var response = await _orderBooksService.GetByOrderIdAsync(orderId);
-            if (response?.Order == null)
+            var response = await _ordersService.GetByIdAsync(id, includeProperties: new string[] { "OrderItems" });
+            if (response == null)
             {
                 return NotFound();
             }
@@ -42,52 +56,104 @@ namespace MicroRabbit.Orders.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<OrderBookResponse>> PostAsync([FromBody] AddOrderBookRequest addOrderRequest)
+        public async Task<ActionResult<OrderResponse>> PostAsync([FromBody] AddOrderRequest addOrderRequest)
         {
             if (addOrderRequest == null)
             {
                 return BadRequest();
             }
 
-            var orderBookResponse = await _orderBooksService.AddAsync(addOrderRequest);
+            var addedOrder = await _ordersService.AddAsync(addOrderRequest);//add order and its items
 
-            return CreatedAtRoute(nameof(GetByOrderIdAsync), new { Id = orderBookResponse.Order?.Id }, orderBookResponse);
+            //create event
+            await CreateEvent(addedOrder);
+
+            return CreatedAtRoute(nameof(GetByIdAsync), new { Id = addedOrder.Id }, addedOrder);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> PutAsync([FromBody] UpdateOrderBookRequest updateOrderRequest)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<OrderResponse>> PutAsync(int id, [FromBody] UpdateOrderRequest updateOrderRequest)
+        {
+            var isValid = CheckValidation(updateOrderRequest);
+            if (!isValid) { return BadRequest(); }
+
+            ////***************update order and it's items
+            var updatedOrder = await _ordersService.UpdateOrder(id, updateOrderRequest);
+            if (updatedOrder == null)
+            {
+                return NotFound();
+            }
+
+            //***************create event
+            await CreateEvent(updatedOrder);
+
+            return Ok(updatedOrder);
+        }
+
+        private bool CheckValidation(UpdateOrderRequest updateOrderRequest)
         {
             if (updateOrderRequest == null)
             {
-                return BadRequest();
+                return false;
             }
 
-            var response = await _orderBooksService.UpdateAsync(updateOrderRequest);
+            //validation: check that all same BookId have same UnitPrice
+            var groupByBookId = updateOrderRequest.OrderItems?.Select(x => x.BookId).Distinct().ToList().Count;
+            var groupByBookIdUnitPrice = updateOrderRequest.OrderItems?.Select(x => new { x.BookId, x.UnitPrice }).Distinct().ToList().Count;
 
-            if (response <= 0)
-            {
-                return NotFound();
+            var isValid = groupByBookId == groupByBookIdUnitPrice;
+            if (!isValid)
+            {//different prices for same books
+                return false;
             }
-
-            return Ok();
+            return true;
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int orderId)
+        public async Task<ActionResult<OrderResponse>> DeleteAsync(int id)
         {
-            if (orderId < 1)
+            if (id < 1)
             {
                 return BadRequest();
             }
+            //var deletedOrderItems = await _orderItemsService.DeleteManyByFilterAsync(filter: x => x.OrderId == id);
+            var deletedOrder = await _ordersService.DeleteAsync(id);
 
-            var response = await _orderBooksService.DeleteAsync(orderId);
-
-            if (response == -1)
+            if (deletedOrder == null)
             {
                 return NotFound();
             }
 
-            return Ok();
+            //not passing deleteted items for create event because another another system should delete it's items
+            //passing only added and updated items
+            await CreateEvent(deletedOrder);
+
+            return Ok(deletedOrder);
+        }
+
+        private async Task CreateEvent(OrderResponse? order)
+        {
+            if (order == null) { return; }
+
+            var orderCreateEvent = _mapper.Map<CommonOrder>(order);
+            orderCreateEvent.OrderItems = await GetOrderItemsCreateEvent(orderCreateEvent.OrderItems);
+            await _ordersService.CreateEventToUpdateOrderedBooksAsync(orderCreateEvent);
+        }
+
+        private async Task<IEnumerable<CommonOrderedBook>?> GetOrderItemsCreateEvent(IEnumerable<CommonOrderedBook>? orderItemsCreateEvent)
+        {
+            if (orderItemsCreateEvent == null) { return null; }
+
+            var bookIds = orderItemsCreateEvent.Select(x => x.BookId);
+            var bookData = await _bookService.GetByIdsAsync(bookIds);
+            if (bookData == null) { return orderItemsCreateEvent; }
+
+            var response = (from orderItemCreateEvent in orderItemsCreateEvent
+                            join book in bookData
+                            on orderItemCreateEvent.BookId equals book.Id
+                            select _mapper.Map<CommonOrderedBook>((orderItemCreateEvent, book)));
+
+            return response;
         }
     }
 }

@@ -1,3 +1,5 @@
+using AutoMapper;
+using AutoMapper.Extensions.ExpressionMapping;
 using MediatR;
 using MicroRabbit.Domain.Core.Bus;
 using MicroRabbit.Domain.Core.EventHandlers;
@@ -5,6 +7,9 @@ using MicroRabbit.Domain.Core.Events;
 using MicroRabbit.Domain.Core.Interfaces;
 using MicroRabbit.Infrastructure.IoC;
 using MicroRabbit.Infrastructure.Synchronous.Services;
+using MicroRabbit.Orders.Application.Dtos.Books;
+using MicroRabbit.Orders.Application.Dtos.OrderItems;
+using MicroRabbit.Orders.Application.Dtos.Orders;
 using MicroRabbit.Orders.Application.EventHandlers;
 using MicroRabbit.Orders.Application.Interfaces;
 using MicroRabbit.Orders.Application.Services;
@@ -46,7 +51,7 @@ namespace MicroRabbit.Orders.Api
             builder.Services.AddControllers();
 
             var assembly = Assembly.Load("MicroRabbit.Orders.Application");
-            builder.Services.AddAutoMapper(assembly);
+            builder.Services.AddAutoMapper(cfg => { cfg.AddExpressionMapping(); }, assembly);
 
             builder.Services.AddSwaggerGen(c =>
             {
@@ -89,15 +94,13 @@ namespace MicroRabbit.Orders.Api
             DependencyContainer.RegisterServices(services);
 
             services.AddTransient<IBooksService, BooksService>();
-            services.AddTransient<IBooksRepository, BookRepository>();
-
-            services.AddTransient<IOrderBooksService, OrderBooksService>();
+            services.AddTransient<IBooksRepository<UpdateBookRequest>, BookRepository<UpdateBookRequest>>();
 
             services.AddTransient<IOrdersService, OrdersService>();
-            services.AddTransient<IOrdersRepository, OrderRepository>();
+            services.AddTransient<IOrdersRepository<UpdateOrderRequest, UpdateOrderItemRequest>, OrderRepository<UpdateOrderRequest, UpdateOrderItemRequest>>();
 
             services.AddTransient<IOrderItemsService, OrderItemsService>();
-            services.AddTransient<IOrderItemsRepository, OrderItemRepository>();
+            services.AddTransient<IOrderItemsRepository<UpdateOrderItemRequest>, OrderItemRepository<UpdateOrderItemRequest>>();
 
             services.AddTransient<IRequestHandler<UpdateOrderedBooksCommand, bool>, UpdateOrderedBooksCommandHandler>();
 

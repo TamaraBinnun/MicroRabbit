@@ -5,6 +5,9 @@ namespace MicroRabbit.Books.Application.Dtos.Books
     public class AddBookRequest
     {
         [Required]
+        public string ISBN { get; set; } = null!;
+
+        [Required]
         public string Title { get; set; } = null!;
 
         public int PublicationId { get; set; }

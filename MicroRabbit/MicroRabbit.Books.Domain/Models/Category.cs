@@ -10,5 +10,8 @@ namespace MicroRabbit.Books.Domain.Models
         public string Name { get; set; } = null!;
 
         public int? ParentCategoryId { get; set; }
+
+        public ICollection<Book>? Books { get; set; }//many to many relationship: category can have many books
+        public ICollection<BookCategory>? BookCategory { get; set; }
     }
 }

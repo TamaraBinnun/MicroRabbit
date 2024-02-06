@@ -2,6 +2,8 @@
 {
     public class CommonBookData
     {
+        public string ISBN { get; set; } = null!;
+
         public int BookId { get; set; }
 
         public string Title { get; set; } = null!;

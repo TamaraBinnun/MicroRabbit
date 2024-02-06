@@ -1,13 +1,13 @@
-﻿namespace MicroRabbit.Orders.Application.Dtos
+﻿using MicroRabbit.Domain.Core.Models;
+
+namespace MicroRabbit.Orders.Application.Dtos
 {
-    public class BookResponse
+    public class BookResponse : BaseResponse
     {
-        public int Id { get; set; }
+        public string ISBN { get; set; } = null!;
 
         public string Title { get; set; } = null!;
 
         public int ExternalId { get; set; }
-
-        public DateTime CreatedDate { get; set; }
     }
 }

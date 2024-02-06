@@ -10,6 +10,9 @@ namespace MicroRabbit.Orders.Domain.Models
 
         public string DeliveryAddress { get; set; } = null!;
 
-        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public int? PaymentId { get; set; }//one to one relationship: each order ca have one payment data
+        public Payment? Payment { get; set; }
+
+        public ICollection<OrderItem>? OrderItems { get; set; }//one to many relationship: each order can have many order items
     }
 }
