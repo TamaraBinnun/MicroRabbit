@@ -12,6 +12,8 @@ namespace MicroRabbit.Orders.Application.Profiles
         {
             //OrdersController Service.AddAsync in addition to BaseProfile: CreatedDate + LastUpdatedDate
             CreateMap<AddOrderRequest, Order>()
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.LastUpdatedDate, opt => opt.MapFrom(src => DateTime.Now))
                 .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => OrderStatus.Created));
 
             //OrdersController CreateEvent
