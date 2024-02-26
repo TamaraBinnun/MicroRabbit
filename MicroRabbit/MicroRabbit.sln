@@ -59,8 +59,8 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8S", "K8S", "{5BF29DA3-5D6C-42F7-9543-1FF830550FA7}"
 	ProjectSection(SolutionItems) = preProject
-		ingress.yaml = ingress.yaml
 		rabbitmq-deployment.yaml = rabbitmq-deployment.yaml
+		rabbitmq-ingress.yaml = rabbitmq-ingress.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{A8CA426A-BB29-48D2-8DFF-AC4B8FA07BFF}"
@@ -85,7 +85,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "order", "order", "{3C86747B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure.Synchronous", "Infrastructure.Synchronous", "{61781070-17A1-45CC-906C-6E266238D8F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroRabbit.Infrastructure.Synchronous", "MicroRabbit.Infrastructure.Synchronous\MicroRabbit.Infrastructure.Synchronous.csproj", "{DA47DFC1-7AAD-443E-82AA-148B674DD864}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroRabbit.Infrastructure.Synchronous", "MicroRabbit.Infrastructure.Synchronous\MicroRabbit.Infrastructure.Synchronous.csproj", "{DA47DFC1-7AAD-443E-82AA-148B674DD864}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
